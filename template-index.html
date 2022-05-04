@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="{{blog_locale}}">
+	<head>
+		<title>{{blog_title}}</title>
+		<meta charset="UTF-8" />
+
+		<!-- SEO -->
+		<meta name="author" content="{{blog_author}}" />
+		<meta name="description" content="{{blog_description}}" />
+		<meta property="og:title" content="{{blog_title}}" />
+		<meta property="og:description" content="{{blog_description}}" />
+		<meta property="og:site_name" content="{{blog_title}}" />
+		<meta property="og:url" content="{{blog_url}}" />
+		<meta property="og:image" content="{{blog_url}}/card.jpg" />
+		<meta property="og:type" content="Website" />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="627" />
+		<meta name="twitter:card" content="summary" />
+		<meta name="twitter:site" content="{{blog_title}}" />
+		<meta name="twitter:creator" content="{{blog_author}}" />
+		<meta name="twitter:title" content="{{blog_title}}" />
+		<meta name="twitter:description" content="{{blog_description}}" />
+		<meta name="twitter:image:src" content="{{blog_url}}/card.jpg" />
+		<!--  -->
+
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Language" content="{{blog_locale}}" />
+		<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+		<link rel="icon" href="./favicon.png" />
+		<link
+			href="https://unpkg.com/plume-css@1.0.13/lib/plume-all.css"
+			rel="stylesheet"
+			rel="preload"
+			as="style"
+			media="all"
+			defer
+		/>
+		<link
+			rel="stylesheet"
+			href="https://unpkg.com/1post@1.0.3/themes/{{blog_theme}}.css"
+		/>
+
+		<style>
+			:root {
+				--pm-paragraph-font-size: 1.2em;
+			}
+
+			.plume .pm-link,
+			.plume a {
+				font-size: var(--pm-paragraph-font-size);
+			}
+		</style>
+	</head>
+	<body class="plume">
+		<div class="pm-container">
+			<h1>{{blog_title}}</h1>
+			<h2 class="pm-text-primary pm-h4">{{blog_description}}</h2>
+			<hr />
+
+			<div>
+				<p>
+					Iniciei a faculdade de Sistemas da Informacao em janeiro de 2022,
+					mas comecei a estudar programacao em maio de 2021. Ate entao
+					foquei em aprender o maximo da stack JavaScript que consegui.
+					Hoje conto com conhecimentos em front-end com React e Next e
+					backend com Node + Express, criando APIs com arquitetura REST.
+				</p>
+				<p>
+					Atualmente trabalho como Tecnico de Informatica em um hospital e
+					procuro oportunidades para atuar com desenvolvimento de software.
+				</p>
+			</div>
+
+			<div>
+				<h3>Voce pode me encontrar aqui:</h3>
+				<ul>
+					<li>
+						<a
+							target="_blank"
+							href="https://www.linkedin.com/in/daniloflorenzano/"
+							>Linkedin</a
+						>
+					</li>
+					<li>
+						<a target="_blank" href="https://github.com/daniloflorenzano/"
+							>Github</a
+						>
+					</li>
+					<li>
+						<a
+							target="_blank"
+							href="https://www.cvkeep.com/cv/daniloflorenzano"
+							>CvKeep</a
+						>
+					</li>
+				</ul>
+			</div>
+
+			<h2>Posts</h2>
+
+			{{posts_feed}}
+		</div>
+	</body>
+</html>

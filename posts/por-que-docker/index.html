@@ -1,0 +1,131 @@
+<!-- This is an automatically generated file, do not edit it directly -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <title>Por que estou estudando Docker?</title>
+  <meta charset="UTF-8">
+  
+  <!-- SEO -->
+  <meta name="author" content="Danilo Maia Florenzano">
+  <meta name="description" content="Documentando minha breve experiência com Docker">
+  <meta property="og:title" content="Por que estou estudando Docker?">
+  <meta property="og:description" content="Documentando minha breve experiência com Docker">
+  <meta property="og:site_name" content="Danilo M. Florenzano">
+  <meta property="og:url" content="https://blogcompleteurl.com/posts/por-que-docker">
+  <meta property="og:image" content="https://blogcompleteurl.com/card.jpg"/>
+  <meta property="og:type" content="Website"/>
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="627" />
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:site" content="Danilo M. Florenzano">
+  <meta name="twitter:creator" content="Danilo Maia Florenzano">
+  <meta name="twitter:title" content="Por que estou estudando Docker?">
+  <meta name="twitter:description" content="Documentando minha breve experiência com Docker">
+  <meta name="twitter:image:src" content="https://blogcompleteurl.com/card.jpg">
+  <!--  -->
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="Content-Language" content="pt-BR">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="icon" href="../../favicon.png">
+  <link href="https://unpkg.com/plume-css@1.0.13/lib/plume-all.css" rel="stylesheet" rel="preload" as="style" media="all" defer>
+  <link rel="stylesheet" href="https://unpkg.com/1post@1.0.3/themes/solar-theme.css">
+  <link href="https://unpkg.com/prismjs@1.28.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+  <style>
+    :root {
+      --pm-paragraph-font-size: 1.2em
+    }
+
+    .plume .pm-link, .plume a {
+      font-size: var(--pm-paragraph-font-size);
+    }
+  </style>  
+</head>
+<body class="plume">
+  <div class="pm-container">
+    <h1>Por que estou estudando Docker?</h1>
+
+    <p>
+      <a href="../..">← ← ←</a> &nbsp; 
+      04/05/2022 10:29:25 | <strong>Postado por:</strong>
+      <a href="https://cvkeep.com/daniloflorenzano" target="_blank" rel="noreferrer noopener">Danilo Maia Florenzano</a>
+    </p>
+
+    <hr>
+
+    
+
+<h3>
+	Posso começar com a resposta: <b>porque assim minha aplicação funciona!</b>
+</h3>
+<p>
+	Nesse post eu conto um pouco da minha breve experiência com Docker. Então vou
+	ilustrar minha afirmação com uma situação que passei.
+</p>
+<p>
+	Estou fazendo uma API para uma aplicação de controle de estoque. Nessa API
+	estou usando PostgreSQL como banco de dados e TypeORM para fazer as conexões.
+	E para trabalhar nessa API, em casa eu uso meu desktop com Windows 11 e fora
+	eu uso meu notebook com Pop OS (distribuição Linux). Portanto eu tenho dois
+	ambientes, e é aí que o Docker entra!
+</p>
+
+<a target="blank_" href="https://github.com/daniloflorenzano/inventario-api"
+	>Link para o repositório da API citada.</a
+>
+
+<p>
+	Com o Docker, a primeira vantagem foi eu não precisar instalar o PostgreSQL
+	em nenhuma máquina. Isso mesmo, da pra usar o banco de dados diretamente de
+	um container. Pra isso, so precisei de duas coias: o docker (com
+	docker-compose) instalado e um arquivo dentro do meu projeto com as
+	configurações do container.
+</p>
+
+<p>Abaixo tem o arquivo de configuração do container da API:</p>
+<pre><code>
+  \\ docker-compose.yml
+
+  version: '3'
+  services:
+  db:
+    image: 'postgres:latest'
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: inventario
+    volumes: 
+      - ./pgdata:/var/lib/postgres/data
+    ports: 
+      - "5432:5432"
+</code></pre>
+
+<p>
+	Confesso que só essa pequena facilidade já me convenceu a usar o Docker em
+	qualquer futuro projeto que eu faca. Mas além de "dockerizar" o banco de
+	dados, fiz isso também com a aplicação inteira! E seguindo a lógica, se a
+	aplicação roda perfeitamente no container, eu posso executar esse container
+	em qualquer ambiente com a garantia de que ela vai continuar funcionando!
+</p>
+<p><b>Chega de "mas na minha máquina funciona"!</b></p>
+
+<p>
+	Nesse post o intuito não é ensinar a usar o Docker. Mas caso você também seja
+	iniciante e queira aprender, disponibilizo o link da playlist no YouTube onde
+	eu aprendi:
+</p>
+<a target="blank_" href="https://www.youtube.com/watch?v=tCVU2l89qz0"
+	>Implementando uma API com Node.js, Express, TypeScript, TypeORM e Docker
+	(parte 1 de 4)
+</a>
+
+
+  </div>
+
+  <!-- Prism Code Highlighting -->
+  <script src="https://unpkg.com/prismjs@1.28.0/components/prism-core.min.js"></script>
+	<script src="https://unpkg.com/prismjs@1.28.0/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>
