@@ -1,0 +1,173 @@
+<!--:::{
+  "post_title": "OOP - Quando usar Interface e quando usar uma Classe Abstrata",
+  "post_description": "As diferenças e como tomar a decisão entre uma Interface e uma Classe Abstrata em um código Orientado a Objeto",
+  "post_created_at": "Sun Jan 29 2023 00:06:19 GMT-0300 (Brasilia Standard Time)"
+}:::-->
+
+<p>
+	Ao ler o título desse artigo, talvez você acredite que vai finalmente
+	encontrar a solução para esse dilema, ou talvez você nem sequer sabia sobre
+	esse dilema e acabou descobrindo por acaso. De qualquer maneira, se você
+	desenvolve usando Orientação a Objeto, espero que esta leitura te seja útil!
+</p>
+
+<h2>A diferença entre uma Interface e uma Classe Abstrata</h2>
+<p>
+	Há duas questões importantes que eu aprendi a levar em consideração quando
+	preciso decidir usar uma Interface ou uma Classe Abstrata. A primeira delas é
+	o <strong>tipo de relação</strong> e a segunda é o princípio
+	<strong>Don't repeat yourself
+	(não se repita)</strong>.
+</p>
+<p>
+	Uma Interface e uma Classe Abstrata representam tipos de relação diferentes
+	com suas herdeiras. Uma classe que deriva de uma
+	<strong>Interface</strong> carrega consigo a relação
+	<strong>"pode fazer"</strong>, pois está determinado por contrato que aquela
+	classe deverá ter, no mínimo, os métodos e as propriedades da Interface que
+	herdou. No entanto, em uma situação onde duas classes distintas herdam da
+	mesma Interface, não há o que garanta que essas classes tenham qualquer
+	relação uma com a outra. Já uma classe que herda de uma
+	<strong>Classe Abstrata</strong> carrega consigo a relação
+	<strong>"é um(a)"</strong>, que deixa explícito a quem ver o código que duas
+	ou mais classes que herdaram daquela Classe Abstrata fazem parte da mesma
+	hierarquia.
+</p>
+<p>
+	Outra diferença além das relações está na maneira de como o código será
+	aplicado. Uma <strong>Interface</strong> não permite que se insira nela a
+	implementação dos métodos, mas apenas suas declarações. Isso significa que
+	para cada classe que herdar de uma Interface, será necessário que o
+	desenvolvedor implemente a lógica dos métodos. Obviamente isso não é um
+	problema quando a lógica dos métodos é diferente para cada classe que herdou
+	da Interface, mas se esse não for o caso, haverá duplicação de código e o
+	sistema estará violando o <strong>DRY</strong> e correndo o risco de ter
+	problemas por causa dessa prática. Em contrapartida, uma
+	<strong>Classe Abstrata</strong> permite o desenvolvedor que implemente nela
+	a lógica dos métodos, que por sua vez serão reutilizados pelas classes
+	herdeiras sem que seja necessário repetir a implementação e consequentemente
+	mantendo o sistema sem duplicação de código.
+</p>
+
+<h2>Decidir qual usar</h2>
+<p>
+	Acredito que saber a diferença entre as duas abordagens já seja o suficiente
+	para tomar a decisão. Mas vou listar aqui uma espécie de questionário que
+	faço a mim mesmo quando preciso escolher entre usar uma Interface ou uma
+	Classe Abstrata.
+</p>
+<ul>
+	<li>
+		Que tipo de relação faz mais sentido aqui, “pode fazer" ou “é um(a)"?
+	</li>
+	<li>As classes herdeiras sempre farão parte da mesma hierarquia?</li>
+	<li>
+		Se eu optar por uma Interface, vou precisar repetir código na hora de
+		implementar os métodos?
+	</li>
+</ul>
+<p>
+	Dados essas simples perguntas, eu reflito sobre qual será a melhor escolha
+	para as necessidades do sistema.
+</p>
+
+<h2>Exemplo prático de uso de uma Classe Abstrata</h2>
+<p>
+	Tudo o que escrevi aqui foi fruto do que aprendi em um <a href="https://www.pluralsight.com/courses/domain-driven-design-in-practice">curso</a> de
+	<strong>DDD (Domain Driven Design)</strong>, que inclusive é gratuito.
+	Portanto, nada mais justo do que trazer aqui o exemplo de uma Classe Abstrata
+	sendo usada para definir a <strong>classe base</strong> de Entidade, algo
+	utilizado em sistemas que seguem DDD.
+</p>
+<p>
+	Contextualizando rapidamente: uma classe base pode servir para, além de
+	definir métodos e propriedades, ajudar o desenvolvedor que trabalhar no
+	projeto a identificar rapidamente o que está definido como Entidade e o que
+	está definido como Objeto de Valor.
+</p>
+
+<code>
+	<pre>
+    public abstract class Entity
+    {
+      public long Id { get; private set; }
+      
+      public override bool Equals(object obj)
+      {
+        var other = obj as Entity;
+        
+        if (ReferenceEquals(other, null))
+          return false;
+    
+        if (ReferenceEquals(this, other))
+          return true;
+    
+        if (GetType() != other.GetType())
+          return false;
+    
+        if (Id == 0 || other.Id == 0)
+          return false;
+    
+        return Id == other.Id;
+      }
+    
+      public static bool operator ==(Entity a, Entity b)
+      {
+        if (ReferenceEquals(a, null) && ReferenceEquals(b, null)
+          return true;
+    
+        if (ReferenceEquals(a, null) || ReferenceEquals(b, null)
+          return false;
+    
+        return a.Equals(b);
+      }
+    
+      ...
+    }
+  </pre
+	>
+</code>
+<q>Exemplo retirado do <a href="https://www.pluralsight.com/courses/domain-driven-design-in-practice">curso</a> de DDD da Pluralsight.</q>
+<br>
+<br>
+
+<p>
+	Esse exemplo não está completo, mas é o suficiente para ilustrar o que trago
+	nesse artigo. Em Domain Driven Design, uma Entidade para ser igual a outra
+	deve ser igual em referência e em Id. Portanto é daí que surge a necessidade
+	de reescrever o método <i>Equals</i> e o operador de igualdade (==). A escolha de
+	uma <strong>Classe Abstrata</strong> para esse caso se dá porque é uma
+	relação de "é uma Entidade", portanto fazem parte da mesma hierarquia, e as
+	lógicas dos métodos definidos já estão feitos e serão os mesmos para todas as
+	classes herdeiras, ou seja, <strong>não haverá duplicação de código</strong>.
+</p>
+
+<p>
+	Agradeço a quem leu até aqui, e deixo abaixo alguns links úteis sobre
+	temas que abordei no artigo, mas não aprofundei:
+</p>
+<ul>
+	<li>
+		<a href="https://www.macoratti.net/16/04/net_dry1.htm"
+			>Don’t Repeat Yourself (Não se repita)</a
+		>
+	</li>
+	<li>
+		<a href="https://www.zup.com.br/blog/domain-driven-design-ddd"
+			>Domain Driven Design</a
+		>
+	</li>
+	<li>
+		<a href="https://www.macoratti.net/20/07/c_entbase1.htm"
+			>Entity Base Class</a
+		>
+	</li>
+</ul>
+
+<p>
+	Deixo também um artigo meu para quem gosta de Clean Code:
+	<a
+		href="https://daniloflorenzano.github.io/blog/posts/objeto-vs-estrutura-dados/"
+		>Objeto Vs. Estrutura de Dados</a
+	>
+</p>
