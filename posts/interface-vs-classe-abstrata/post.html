@@ -86,47 +86,48 @@
 	está definido como Objeto de Valor.
 </p>
 
-<code>
 	<pre>
-    public abstract class Entity
-    {
-      public long Id { get; private set; }
-      
-      public override bool Equals(object obj)
-      {
-        var other = obj as Entity;
-        
-        if (ReferenceEquals(other, null))
-          return false;
-    
-        if (ReferenceEquals(this, other))
-          return true;
-    
-        if (GetType() != other.GetType())
-          return false;
-    
-        if (Id == 0 || other.Id == 0)
-          return false;
-    
-        return Id == other.Id;
-      }
-    
-      public static bool operator ==(Entity a, Entity b)
-      {
-        if (ReferenceEquals(a, null) && ReferenceEquals(b, null)
-          return true;
-    
-        if (ReferenceEquals(a, null) || ReferenceEquals(b, null)
-          return false;
-    
-        return a.Equals(b);
-      }
-    
-      ...
-    }
-  </pre
-	>
-</code>
+		<code class="language-csharp">
+
+			public abstract class Entity
+			{
+			  public long Id { get; private set; }
+			  
+			  public override bool Equals(object obj)
+			  {
+				var other = obj as Entity;
+				
+				if (ReferenceEquals(other, null))
+				  return false;
+			
+				if (ReferenceEquals(this, other))
+				  return true;
+			
+				if (GetType() != other.GetType())
+				  return false;
+			
+				if (Id == 0 || other.Id == 0)
+				  return false;
+			
+				return Id == other.Id;
+			  }
+			
+			  public static bool operator ==(Entity a, Entity b)
+			  {
+				if (ReferenceEquals(a, null) && ReferenceEquals(b, null)
+				  return true;
+			
+				if (ReferenceEquals(a, null) || ReferenceEquals(b, null)
+				  return false;
+			
+				return a.Equals(b);
+			  }
+			
+			  ...
+			}
+		</code>
+  </pre>
+
 <q>Exemplo retirado do <a href="https://www.pluralsight.com/courses/domain-driven-design-in-practice">curso</a> de DDD da Pluralsight.</q>
 <br>
 <br>
@@ -149,7 +150,7 @@
 <ul>
 	<li>
 		<a href="https://www.macoratti.net/16/04/net_dry1.htm"
-			>Don’t Repeat Yourself (Não se repita)</a
+			>Don't Repeat Yourself (Não se repita)</a
 		>
 	</li>
 	<li>

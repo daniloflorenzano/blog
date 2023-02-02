@@ -31,15 +31,21 @@
   <link href="https://unpkg.com/plume-css@1.0.13/lib/plume-all.css" rel="stylesheet" rel="preload" as="style" media="all" defer>
   <link rel="stylesheet" href="https://unpkg.com/1post@1.0.3/themes/{{blog_theme}}.css">
   <link href="https://unpkg.com/prismjs@1.28.0/themes/{{blog_prism_theme}}.min.css" rel="stylesheet" />
-
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu&display=swap" rel="stylesheet">
   <style>
     :root {
-      --pm-paragraph-font-size: 1.2em
+      --pm-paragraph-font-size: 1.2em;
+      --pm-font-family-primary: 'Ubuntu', sans-serif;
+      --pm-paragraph-font-family:'Ubuntu', sans-serif;
     }
 
     .plume .pm-link, .plume a {
       font-size: var(--pm-paragraph-font-size);
+      font-family: var(--pm-font-family-primary);
     }
+
   </style>  
 </head>
 <body class="plume">

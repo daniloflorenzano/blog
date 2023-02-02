@@ -10,14 +10,14 @@
   <meta name="description" content="As diferenças e como tomar a decisão entre uma Interface e uma Classe Abstrata em um código Orientado a Objeto">
   <meta property="og:title" content="OOP - Quando usar Interface e quando usar uma Classe Abstrata">
   <meta property="og:description" content="As diferenças e como tomar a decisão entre uma Interface e uma Classe Abstrata em um código Orientado a Objeto">
-  <meta property="og:site_name" content="Danilo M. Florenzano">
+  <meta property="og:site_name" content="Danilo Florenzano">
   <meta property="og:url" content="https://blogcompleteurl.com/posts/interface-vs-classe-abstrata">
   <meta property="og:image" content="https://blogcompleteurl.com/card.jpg"/>
   <meta property="og:type" content="Website"/>
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="627" />
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:site" content="Danilo M. Florenzano">
+  <meta name="twitter:site" content="Danilo Florenzano">
   <meta name="twitter:creator" content="Danilo Maia Florenzano">
   <meta name="twitter:title" content="OOP - Quando usar Interface e quando usar uma Classe Abstrata">
   <meta name="twitter:description" content="As diferenças e como tomar a decisão entre uma Interface e uma Classe Abstrata em um código Orientado a Objeto">
@@ -31,16 +31,22 @@
   <link rel="icon" href="../../favicon.png">
   <link href="https://unpkg.com/plume-css@1.0.13/lib/plume-all.css" rel="stylesheet" rel="preload" as="style" media="all" defer>
   <link rel="stylesheet" href="https://unpkg.com/1post@1.0.3/themes/solar-theme.css">
-  <link href="https://unpkg.com/prismjs@1.28.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-
+  <link href="https://unpkg.com/prismjs@1.28.0/themes/prism-twilight.min.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu&display=swap" rel="stylesheet">
   <style>
     :root {
-      --pm-paragraph-font-size: 1.2em
+      --pm-paragraph-font-size: 1.2em;
+      --pm-font-family-primary: 'Ubuntu', sans-serif;
+      --pm-paragraph-font-family:'Ubuntu', sans-serif;
     }
 
     .plume .pm-link, .plume a {
       font-size: var(--pm-paragraph-font-size);
+      font-family: var(--pm-font-family-primary);
     }
+
   </style>  
 </head>
 <body class="plume">
@@ -50,7 +56,7 @@
     <p>
       <a href="../..">← ← ←</a> &nbsp; 
       29/01/2023 00:06:19 | <strong>Postado por:</strong>
-      <a href="https://cvkeep.com/daniloflorenzano" target="_blank" rel="noreferrer noopener">Danilo Maia Florenzano</a>
+      <a href="https://bio.link/daniloflorenzano" target="_blank" rel="noreferrer noopener">Danilo Maia Florenzano</a>
     </p>
 
     <hr>
@@ -139,47 +145,48 @@
 	está definido como Objeto de Valor.
 </p>
 
-<code>
 	<pre>
-    public abstract class Entity
-    {
-      public long Id { get; private set; }
-      
-      public override bool Equals(object obj)
-      {
-        var other = obj as Entity;
-        
-        if (ReferenceEquals(other, null))
-          return false;
-    
-        if (ReferenceEquals(this, other))
-          return true;
-    
-        if (GetType() != other.GetType())
-          return false;
-    
-        if (Id == 0 || other.Id == 0)
-          return false;
-    
-        return Id == other.Id;
-      }
-    
-      public static bool operator ==(Entity a, Entity b)
-      {
-        if (ReferenceEquals(a, null) && ReferenceEquals(b, null)
-          return true;
-    
-        if (ReferenceEquals(a, null) || ReferenceEquals(b, null)
-          return false;
-    
-        return a.Equals(b);
-      }
-    
-      ...
-    }
-  </pre
-	>
-</code>
+		<code class="language-csharp">
+
+			public abstract class Entity
+			{
+			  public long Id { get; private set; }
+			  
+			  public override bool Equals(object obj)
+			  {
+				var other = obj as Entity;
+				
+				if (ReferenceEquals(other, null))
+				  return false;
+			
+				if (ReferenceEquals(this, other))
+				  return true;
+			
+				if (GetType() != other.GetType())
+				  return false;
+			
+				if (Id == 0 || other.Id == 0)
+				  return false;
+			
+				return Id == other.Id;
+			  }
+			
+			  public static bool operator ==(Entity a, Entity b)
+			  {
+				if (ReferenceEquals(a, null) && ReferenceEquals(b, null)
+				  return true;
+			
+				if (ReferenceEquals(a, null) || ReferenceEquals(b, null)
+				  return false;
+			
+				return a.Equals(b);
+			  }
+			
+			  ...
+			}
+		</code>
+  </pre>
+
 <q>Exemplo retirado do <a href="https://www.pluralsight.com/courses/domain-driven-design-in-practice">curso</a> de DDD da Pluralsight.</q>
 <br>
 <br>
@@ -202,7 +209,7 @@
 <ul>
 	<li>
 		<a href="https://www.macoratti.net/16/04/net_dry1.htm"
-			>Don’t Repeat Yourself (Não se repita)</a
+			>Don't Repeat Yourself (Não se repita)</a
 		>
 	</li>
 	<li>
