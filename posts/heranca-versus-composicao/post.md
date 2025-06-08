@@ -23,7 +23,7 @@ A composição, por outro lado, promove um acoplamento mais fraco, permitindo ma
 
 ## Exemplo
 
-No exemplo da imagem, a herança não é justificada porque nenhuma das classes herdeiras sobrescreve o método da classe principal (polimorfismo), apenas é reaproveitado o Method1 (reaproveitamento de código).
+No exemplo da imagem, a herança não é justificada porque nenhuma das classes herdeiras sobrescreve o método da classe principal (polimorfismo), apenas é reaproveitado o `Metodo1()` (reaproveitamento de código).
 Nesse caso, como apenas um dos requisitos é preenchido, é melhor usar composição.
 
 ![composicao](composicao.png)
@@ -31,7 +31,6 @@ Nesse caso, como apenas um dos requisitos é preenchido, é melhor usar composi�
 Há também a abordagem de não usar herança mesmo em casos que preencham os dois requisitos. Pois ambos podem ser satisfeitos através da combinação de interfaces e composição.
 
 ![composicao com interface](composicao-com-interface.png)
-
 
 
 ## Referência
