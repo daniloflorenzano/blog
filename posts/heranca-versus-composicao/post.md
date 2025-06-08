@@ -1,6 +1,6 @@
 <!--:::{
   "post_title": "POO: Herança versus Composição",
-  "post_description": "Guia rápida para decidir entre herança e composição na Programação Orientada a Objetos.",
+  "post_description": "Guia rápido para decidir entre herança e composição na Programação Orientada a Objetos.",
   "post_created_at": "Sun Jun 08 2025 12:14:01 GMT-0300 (Horário Padrão de Brasília)"
 }:::-->
 
