@@ -1,12 +1,12 @@
 {
   "blog_locale": "pt-BR",
   "blog_title": "Danilo Florenzano",
-  "blog_description": "🧙‍♂️ Olá nobre curioso!",
+  "blog_description": "🧙‍♂️ Olá, nobre curioso!",
   "blog_theme": "solar-theme",
   "blog_author": "Danilo Maia Florenzano",
-  "blog_author_url": "https://bio.link/daniloflorenzano",
+  "blog_author_url": "https://www.linkedin.com/in/daniloflorenzano/",
   "blog_no_posts_hint": "No posts yet",
   "blog_posted_by_hint": "Postado por:",
-  "blog_url": "https://blogcompleteurl.com",
-  "blog_prism_theme": "prism-twilight"
+  "blog_url": "https://daniloflorenzano.github.io",
+  "blog_prism_theme": "wooden-theme"
 }

@@ -1,0 +1,136 @@
+<!-- This is an automatically generated file, do not edit it directly -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <title>Podman com Quadlets em produção</title>
+  <meta charset="UTF-8">
+  
+  <!-- SEO -->
+  <meta name="author" content="Danilo Maia Florenzano">
+  <meta name="description" content="Como criar um ambiente de produção com Podman no Linux">
+  <meta property="og:title" content="Podman com Quadlets em produção">
+  <meta property="og:description" content="Como criar um ambiente de produção com Podman no Linux">
+  <meta property="og:site_name" content="Danilo Florenzano">
+  <meta property="og:url" content="https://daniloflorenzano.github.io/posts/podman-com-quadlets">
+  <meta property="og:image" content="https://daniloflorenzano.github.io/card.jpg"/>
+  <meta property="og:type" content="Website"/>
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="627" />
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:site" content="Danilo Florenzano">
+  <meta name="twitter:creator" content="Danilo Maia Florenzano">
+  <meta name="twitter:title" content="Podman com Quadlets em produção">
+  <meta name="twitter:description" content="Como criar um ambiente de produção com Podman no Linux">
+  <meta name="twitter:image:src" content="https://daniloflorenzano.github.io/card.jpg">
+  <!--  -->
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="Content-Language" content="pt-BR">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="icon" href="../../favicon.png">
+  <link href="https://unpkg.com/plume-css@1.0.13/lib/plume-all.css" rel="stylesheet" rel="preload" as="style" media="all" defer>
+  <link rel="stylesheet" href="https://unpkg.com/1post@1.0.3/themes/solar-theme.css">
+  <link href="https://unpkg.com/prismjs@1.28.0/themes/wooden-theme.min.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --pm-paragraph-font-size: 1.2em;
+      --pm-font-family-primary: 'Ubuntu', sans-serif;
+      --pm-paragraph-font-family:'Ubuntu', sans-serif;
+    }
+
+    .plume .pm-link, .plume a {
+      font-size: var(--pm-paragraph-font-size);
+      font-family: var(--pm-font-family-primary);
+    }
+    .destaque {
+				color: rgb(18 255 124);
+		}
+  </style>  
+</head>
+<body class="plume">
+  <div class="pm-container">
+    <h1>Podman com Quadlets em produção</h1>
+
+    <p>
+      <a href="../..">← ← ←</a> &nbsp; 
+      08/06/2025, 12:06:13 | <strong>Postado por:</strong>
+      <a href="https://www.linkedin.com/in/daniloflorenzano/" target="_blank" rel="noreferrer noopener">Danilo Maia Florenzano</a>
+    </p>
+
+    <hr>
+
+    
+
+
+<p>Aluguei uma VPS e queria disponibilizar uma API que desenvolvi.</p>
+<p>Optei por utilizar contêineres. A escolha do <strong>Podman</strong> foi feita considerando o objetivo de melhorar minha afinidade com a ferramenta e, também, usufruir da integração nativa com o <strong>systemd</strong>.</p>
+<p>Para atingir um resultado satisfatório, considerando a inicialização dos contêineres no boot e a possibilidade de acompanhar logs pelo <code>journalctl</code>, executei os seguintes passos:</p>
+<hr>
+<ol>
+<li><p>Criei um pod com os contêineres necessários.</p>
+</li>
+<li><p>Gerei um arquivo YAML para Kubernetes a partir do pod:</p>
+<pre><code class="language-bash">podman generate kube xpto-pod -f /tmp/my_pod_kube.yaml
+</code></pre>
+</li>
+<li><p>Criei um arquivo <code>.kube</code>, referenciando o <code>.yaml</code> gerado:</p>
+<p> <strong>xpto-pod.kube</strong></p>
+<pre><code>[Unit]
+Description=Serviço XPTO
+After=network-online.target
+Wants=network-online.target
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Restart=on-failure
+RestartSec=5s
+TimeoutStartSec=900
+
+[Kube]
+Yaml=/tmp/my_pod_kube.yaml
+PublishPort=8080:80
+LogDriver=journald
+SetWorkingDirectory=yaml
+KubeDownForce=true
+</code></pre>
+<blockquote>
+<p><strong>Obs</strong>: A seção <code>[Install]</code> é essencial para que o systemd inicie o pod automaticamente no boot.</p>
+</blockquote>
+</li>
+<li><p>Movi o arquivo para a pasta correta:</p>
+<pre><code class="language-bash">sudo mv xpto-pod.kube /etc/containers/systemd/
+</code></pre>
+</li>
+<li><p>Recarreguei os serviços do systemd:</p>
+<pre><code class="language-bash">sudo systemctl daemon-reexec
+sudo systemctl daemon-reload
+</code></pre>
+</li>
+<li><p>Finalizado! Para verificar se o serviço está em execução:</p>
+<pre><code class="language-bash">systemctl status xpto-pod.service
+</code></pre>
+</li>
+</ol>
+<hr>
+<p>Continuo explorando formas de usar o <strong>Podman</strong> e suas ferramentas e integrações.</p>
+<p><strong>Fontes que utilizei para alcançar esse resultado:</strong></p>
+<ul>
+<li><a href="https://www.youtube.com/live/LsZB_mI7TcQ?si=ZKEaWhoXwgrhYves">Quadlets, Pods, and working with the latest Podman, Podman 5</a>  </li>
+<li><a href="https://oracle-base.com/articles/linux/podman-generate-and-play-kubernetes-yaml-files">Podman: Generate and Play Kubernetes YAML Files</a>  </li>
+<li><a href="https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html">Documentação oficial: podman-systemd.unit</a></li>
+</ul>
+
+
+  </div>
+
+  <!-- Prism Code Highlighting -->
+  <script src="https://unpkg.com/prismjs@1.28.0/components/prism-core.min.js"></script>
+	<script src="https://unpkg.com/prismjs@1.28.0/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>
