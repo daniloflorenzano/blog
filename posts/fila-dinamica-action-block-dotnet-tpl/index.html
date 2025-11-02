@@ -1,0 +1,158 @@
+<!-- This is an automatically generated file, do not edit it directly -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <title>Usando ActionBlock como uma Fila Dinâmica Recursiva e Multithread no .NET</title>
+  <meta charset="UTF-8">
+  
+  <!-- SEO -->
+  <meta name="author" content="Danilo Maia Florenzano">
+  <meta name="description" content="Uma alternativa melhor ao Parallel.Foreach quando há necessidade de recursão indeterminada">
+  <meta property="og:title" content="Usando ActionBlock como uma Fila Dinâmica Recursiva e Multithread no .NET">
+  <meta property="og:description" content="Uma alternativa melhor ao Parallel.Foreach quando há necessidade de recursão indeterminada">
+  <meta property="og:site_name" content="Danilo Maia Florenzano">
+  <meta property="og:url" content="https://daniloflorenzano.github.io/posts/fila-dinamica-action-block-dotnet-tpl">
+  <meta property="og:image" content="https://daniloflorenzano.github.io/card.jpg"/>
+  <meta property="og:type" content="Website"/>
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="627" />
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:site" content="Danilo Maia Florenzano">
+  <meta name="twitter:creator" content="Danilo Maia Florenzano">
+  <meta name="twitter:title" content="Usando ActionBlock como uma Fila Dinâmica Recursiva e Multithread no .NET">
+  <meta name="twitter:description" content="Uma alternativa melhor ao Parallel.Foreach quando há necessidade de recursão indeterminada">
+  <meta name="twitter:image:src" content="https://daniloflorenzano.github.io/card.jpg">
+  <!--  -->
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="Content-Language" content="pt-BR">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="icon" href="../../favicon.png">
+  <link href="https://unpkg.com/plume-css@1.0.13/lib/plume-all.css" rel="stylesheet" rel="preload" as="style" media="all" defer>
+  <link rel="stylesheet" href="https://unpkg.com/1post@1.0.3/themes/wooden-theme.css">
+  <link href="https://unpkg.com/prismjs@1.28.0/themes/prism-twilight.min.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --pm-paragraph-font-size: 1.2em;
+      --pm-font-family-primary: 'Ubuntu', sans-serif;
+      --pm-paragraph-font-family:'Ubuntu', sans-serif;
+    }
+
+    .plume .pm-link, .plume a {
+      font-size: var(--pm-paragraph-font-size);
+      font-family: var(--pm-font-family-primary);
+    }
+    .destaque {
+				color: rgb(18 255 124);
+		}
+  </style>  
+</head>
+<body class="plume">
+  <div class="pm-container">
+    <h1>Usando ActionBlock como uma Fila Dinâmica Recursiva e Multithread no .NET</h1>
+
+    <p>
+      <a href="../..">← ← ←</a> &nbsp; 
+      02/11/2025, 20:04:22 | <strong>Postado por:</strong>
+      <a href="https://www.linkedin.com/in/daniloflorenzano/" target="_blank" rel="noreferrer noopener">Danilo Maia Florenzano</a>
+    </p>
+
+    <hr>
+
+    
+
+<blockquote>
+<p><em>“TPL Dataflow é uma mistura interessante de tecnologias assíncronas e paralelas. Ela é útil quando você tem uma sequência de processos que precisam ser aplicados aos seus dados.”</em><br>— <em>Stephen Cleary, Concurrency in C# Cookbook</em></p>
+</blockquote>
+<hr>
+<p>Recentemente precisei percorrer uma árvore de categorias recursiva — começando com cerca de 20 nós raiz, cada um contendo um número desconhecido de subcategorias (e sub-subcategorias, e assim por diante).</p>
+<p>Esse tipo de <strong>carga de trabalho que se expande dinamicamente</strong> não funciona bem com ferramentas de paralelismo estático como <code>Parallel.ForEach</code>.</p>
+<hr>
+<h2 id="o-problema-distribuição-estática-de-trabalho">O Problema: Distribuição Estática de Trabalho</h2>
+<p>Se executarmos um <code>Parallel.ForEach</code> nas 20 categorias raiz:</p>
+<ul>
+<li><strong>Thread 1</strong> pode pegar um ramo pequeno e terminar em 1 segundo.  </li>
+<li><strong>Thread 2</strong> pode pegar um ramo enorme e levar 10 minutos.</li>
+</ul>
+<p>Mesmo com <code>MaxDegreeOfParallelism = 50</code>, a maioria das threads termina cedo e fica ociosa — enquanto algumas ficam presas processando árvores profundas e pesadas.<br><strong>Resultado: desequilíbrio de carga e desperdício de recursos.</strong></p>
+<hr>
+<h2 id="a-solução-actionblockt-como-fila-de-trabalho-dinâmica">A Solução: <code>ActionBlock&lt;T&gt;</code> como Fila de Trabalho Dinâmica</h2>
+<p><a href="https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.dataflow.actionblock-1"><code>ActionBlock&lt;T&gt;</code></a>, da biblioteca TPL Dataflow, fornece uma <strong>fila centralizada e thread-safe</strong> com <strong>geração dinâmica de tarefas</strong> e <strong>controle de concorrência</strong>.</p>
+<p>A ideia é simples:</p>
+<ol>
+<li>Criar um único <code>ActionBlock&lt;CategoryNode&gt;</code> com um limite fixo de concorrência.  </li>
+<li>“Iniciar” o bloco com as categorias raiz.  </li>
+<li>Cada worker processa seu nó, encontra as subcategorias e as <strong>reposta</strong> no mesmo <code>ActionBlock</code>.  </li>
+<li>O bloco continua processando até que todos os itens (atuais e pendentes) sejam concluídos.</li>
+</ol>
+<p>Esse padrão funciona como uma <strong>fila recursiva e auto-balanceada</strong> — todas as threads permanecem ocupadas até que toda a árvore seja processada.</p>
+<hr>
+<h2 id="exemplo-de-implementação">Exemplo de Implementação</h2>
+<pre><code class="language-csharp">public class MultithreadTreeParser
+{
+    private int _activeItems;
+    private ActionBlock&lt;CategoryNode&gt; _actionBlock = null!;
+
+    public async Task&lt;int&gt; StartAsync()
+    {
+        var rootNode = await GetDepartmentsRootNodeAsync()
+            ?? throw new Exception(&quot;Falha ao obter nó raiz&quot;);
+
+        var options = new ExecutionDataflowBlockOptions
+        {
+            MaxDegreeOfParallelism = 5
+        };
+
+        _actionBlock = new ActionBlock&lt;CategoryNode&gt;(async node =&gt;
+        {
+            try
+            {
+                await ProcessCategoryAsync(node);
+
+                var subs = node.SubCategories;
+                if (subs.Count &gt; 0)
+                {
+                    Interlocked.Add(ref _activeItems, subs.Count);
+                    foreach (var sub in subs)
+                        await _actionBlock.SendAsync(sub);
+                }
+            }
+            finally
+            {
+                var remaining = Interlocked.Decrement(ref _activeItems);
+                if (remaining == 0)
+                    _actionBlock.Complete();
+            }
+        }, options);
+
+        var rootSubs = rootNode.SubCategories;
+        Interlocked.Add(ref _activeItems, rootSubs.Count);
+
+        foreach (var sub in rootSubs)
+            await _actionBlock.SendAsync(sub);
+
+        await _actionBlock.Completion;
+        return 0;
+    }
+}
+</code></pre>
+<h2 id="por-que-isso-funciona">Por Que Isso Funciona</h2>
+<ul>
+<li>Balanceamento dinâmico de carga: As threads consomem de uma fila compartilhada. Assim que terminam uma tarefa, pegam a próxima disponível.</li>
+<li>Expansão recursiva de trabalho: Cada tarefa pode adicionar novas tarefas de forma segura na mesma fila.</li>
+<li>Paralelismo controlado: MaxDegreeOfParallelism mantém o uso de recursos sob controle.</li>
+<li>Encerramento limpo: _activeItems rastreia o número de tarefas em andamento — quando chega a zero, o pipeline é finalizado de forma ordenada.</li>
+</ul>
+
+
+  </div>
+
+  <!-- Prism Code Highlighting -->
+  <script src="https://unpkg.com/prismjs@1.28.0/components/prism-core.min.js"></script>
+	<script src="https://unpkg.com/prismjs@1.28.0/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>
