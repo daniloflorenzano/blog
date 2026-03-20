@@ -1,0 +1,141 @@
+<!-- This is an automatically generated file, do not edit it directly -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <title>Kali Linux no Docker</title>
+  <meta charset="UTF-8">
+  
+  <!-- SEO -->
+  <meta name="author" content="Danilo Maia Florenzano">
+  <meta name="description" content="Como configurar um container do Kali Linux">
+  <meta property="og:title" content="Kali Linux no Docker">
+  <meta property="og:description" content="Como configurar um container do Kali Linux">
+  <meta property="og:site_name" content="Danilo Maia Florenzano">
+  <meta property="og:url" content="https://daniloflorenzano.github.io/posts/kali-linux-no-docker">
+  <meta property="og:image" content="https://daniloflorenzano.github.io/card.jpg"/>
+  <meta property="og:type" content="Website"/>
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="627" />
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:site" content="Danilo Maia Florenzano">
+  <meta name="twitter:creator" content="Danilo Maia Florenzano">
+  <meta name="twitter:title" content="Kali Linux no Docker">
+  <meta name="twitter:description" content="Como configurar um container do Kali Linux">
+  <meta name="twitter:image:src" content="https://daniloflorenzano.github.io/card.jpg">
+  <!--  -->
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="Content-Language" content="pt-BR">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="icon" href="../../favicon.png">
+  <link href="https://unpkg.com/plume-css@1.0.13/lib/plume-all.css" rel="stylesheet" rel="preload" as="style" media="all" defer>
+  <link rel="stylesheet" href="https://unpkg.com/1post@1.0.3/themes/wooden-theme.css">
+  <link href="https://unpkg.com/prismjs@1.28.0/themes/prism-twilight.min.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --pm-paragraph-font-size: 1.2em;
+      --pm-font-family-primary: 'Ubuntu', sans-serif;
+      --pm-paragraph-font-family:'Ubuntu', sans-serif;
+    }
+
+    .plume .pm-link, .plume a {
+      font-size: var(--pm-paragraph-font-size);
+      font-family: var(--pm-font-family-primary);
+    }
+    .destaque {
+				color: rgb(18 255 124);
+		}
+  </style>  
+</head>
+<body class="plume">
+  <div class="pm-container">
+    <h1>Kali Linux no Docker</h1>
+
+    <p>
+      <a href="../..">← ← ←</a> &nbsp; 
+      20/03/2026, 18:22:25 | <strong>Postado por:</strong>
+      <a href="https://www.linkedin.com/in/daniloflorenzano/" target="_blank" rel="noreferrer noopener">Danilo Maia Florenzano</a>
+    </p>
+
+    <hr>
+
+    
+
+<p><img 
+  src="kali-lab.png"
+  alt="output do comand fastfetch no kali linux"
+  width="100%"
+  height="100%"
+/></p>
+<h2 id="container-vs-máquina-virtual---escolha-pessoal">Container vs Máquina Virtual - escolha pessoal</h2>
+<p>Trabalhar com o Kali em um container tem suas vantagens e desvantagens, e a maioria delas é as mesmas que você encontraria em qualquer situação semelhante (performance, isolamento de ambiente, etc). E, para mim, os pontos principais que me levaram a optar pelo container foram dois:</p>
+<ol>
+<li><p><strong>Aproveitar o meu workflow já configurado</strong>. Utilizo, até o momento da escrita desse post, Hyprland como gerenciador de janelas. Utilizar o Kali em um container sem ambiente gráfico me poupa de me adaptar ao <em>workflow</em> da distro ou de ter o trabalho de adaptar ele ao meu. </p>
+</li>
+<li><p><strong>Ambientes gráficos, nesse caso, não me fazem falta</strong>. Algumas ferramentas no Kali, como Wireshark e Burp Suite, já fazem parte do meu dia a dia independente do estudo a parte que faço sobre segurança da informação e estão instaladas diretamente no meu SO host.</p>
+</li>
+</ol>
+<h2 id="download-da-imagem-e-configuração-do-container">Download da imagem e configuração do container</h2>
+<p>A imagem Docker do Kali não é nenhuma &quot;gambiarra; é oficial e pode ser encontrada <a href="https://www.kali.org/docs/containers/official-kalilinux-docker-images/">aqui</a>.</p>
+<p>Como sugerido no próprio portal, a imagem recomendada é a <code>kali-rolling</code>.</p>
+<pre><code class="language-bash">docker pull kalilinux/kali-rolling
+</code></pre>
+<p>Após o <em>pull</em> da imagem, o container já pode ser iniciado. Porém, aqui algumas configurações se fazem necessárias para o uso mais conveniente do sistema.</p>
+<p>Antes de iniciar o container, recomendo que rode o seguinte comando para criar o volume em que as configurações feitas no Kali sejam persistidas:</p>
+<pre><code class="language-bash">docker volume create kali_data
+</code></pre>
+<p>O seguinte comando cria, inicia o container e em seguida já dá acesso ao Kali pelo <code>bash</code>:</p>
+<pre><code class="language-bash">docker run -it \
+ --name kali-lab \
+ --network host \
+ -v kali_data:/root \
+ --cap-add=NET_ADMIN \
+ --cap-add=NET_RAW \
+ kalilinux/kali-rolling /bin/bash
+</code></pre>
+<ul>
+<li><code>--network host</code>: O container compartilha a interface de rede diretamente com a sua máquina real. Essencial para ataques de rede, <em>sniffing</em>, <em>scanners</em> e conexão com <em>reverse shell</em>.</li>
+<li><code>--cap-add=NET_ADMIN</code>: Permite configurar interfaces de rede.</li>
+<li><code>--cap-add=NET_RAW</code>: Permite que o Nmap crie pacotes &quot;crus&quot; para <em>scans</em> furtivos.</li>
+</ul>
+<p>A documentação do Kali informa que a imagem não possui as ferramentas padrões instaladas, e, portanto, é necessário executar o comando abaixo no <code>bash</code> do container:</p>
+<pre><code class="language-bash">apt update &amp;&amp; apt -y install kali-linux-headless
+</code></pre>
+<p>Acompanhe a instalação até o final.</p>
+<p>Seu Kali está pronto, e mesmo que você saia do container ou feche o terminal, basta iniciá-lo novamente com <code>docker start kali-lab</code> e acessá-lo com <code>docker exec -it kali-lab /bin/bash</code>.</p>
+<h2 id="melhoria-do-workflow">Melhoria do workflow</h2>
+<p>Pra facilitar a vida, uma configuração <strong>opcional para quem usa Linux</strong> é adicionar uma função no <code>~/.bashrc</code> que combina os comandos <em>start</em> e o <em>exec -it</em>. Dessa forma é mais simples iniciar o ambiente e abrir quantos terminais forem necessários dentro do container.</p>
+<pre><code class="language-bash">kali() {
+    # Verifica se o container existe
+    if [ &quot;$(docker ps -aq -f name=kali-lab)&quot; ]; then
+        # Se estiver parado, inicia
+        if [ ! &quot;$(docker ps -q -f name=kali-lab)&quot; ]; then
+            echo &quot;Iniciando kali-lab...&quot;
+            docker start kali-lab
+        fi
+        # Entra no container
+        docker exec -it kali-lab /bin/bash
+    else
+        echo &quot;Erro: O container &#39;kali-lab&#39; não existe. Execute o comando &#39;docker run&#39; primeiro.&quot;
+    fi
+}
+</code></pre>
+<p>Após essa função adicionada no arquivo <code>~/.bashrc</code>, basta executar <code>kali</code> no terminal para acessar o ambiente.</p>
+<pre><code class="language-bash">~ ❯ kali
+┌──(root㉿omarchy)-[/]
+└─# bom hacking!
+</code></pre>
+<p>Feito!</p>
+
+
+  </div>
+
+  <!-- Prism Code Highlighting -->
+  <script src="https://unpkg.com/prismjs@1.28.0/components/prism-core.min.js"></script>
+	<script src="https://unpkg.com/prismjs@1.28.0/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>
