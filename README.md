@@ -1,4 +1,4 @@
-# Blog pessoal para documentar aprendizados e projetos
+# Blog pessoal 
 Feito usando 1Post
 
 ## Uso
