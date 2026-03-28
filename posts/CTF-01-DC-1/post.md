@@ -1,6 +1,6 @@
 <!--:::{
   "post_title": "CTF #01 - Exploração do laboratório DC-1",
-  "post_description": "Aplicação de técnicas de enumeração e execução de exploits para conseguir <code>reverse shell</code>, captura de credenciais, e elevação de privilégio em Linux. O post não evidencia todo o processo que executei, apenas os que trouxeram resultados relevantes para a captura das <i>flags</i>.",
+  "post_description": "Aplicação de técnicas de enumeração e execução de <i>exploits</i>, captura de credenciais, e elevação de privilégio em Linux. A postagem foca no passo-a-passo direto ao ponto, mostrando abordagens com as quais obtive sucesso na captura das <i>flags</i>",
   "post_created_at": "Sat Mar 28 2026 11:10:48 GMT-0300 (Brasilia Standard Time)"
 }:::-->
 
