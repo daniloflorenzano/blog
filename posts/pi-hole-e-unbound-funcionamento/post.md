@@ -4,7 +4,7 @@
   "post_created_at": "Sun Apr 26 2026 19:33:43 GMT-0300 (Brasilia Standard Time)"
 }:::-->
 
-## Conclusão
+## Introdução
 
 **Pi-hole** é um serviço conhecido e amplamente utilizado por quem tem o hábito de hospedar serviços em sua rede local (prática conhecida como self-host ou home lab).
 Junto ao Pi-hole, que atua como um bloqueador de anúncios, é comum utilizar o **Unbound** como servidor DNS upstream para substituir os populares como Google, Cloudflare, etc.
