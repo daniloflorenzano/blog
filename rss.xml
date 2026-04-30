@@ -2,9 +2,9 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
   <title>Danilo Maia Florenzano</title>
-  <link>https://daniloflorenzano.github.io</link>
+  <link>https://daniloflorenzano.com.br</link>
   <description>🧙‍♂️ Salve!</description>
-  <atom:link href="https://daniloflorenzano.github.io/rss.xml" rel="self" type="application/rss+xml" />
+  <atom:link href="https://daniloflorenzano.com.br/rss.xml" rel="self" type="application/rss+xml" />
   <item>
     <title>Pi-hole e Unbound: privacidade com adblock na rede e DNS recursivo</title>
     <link>https://daniloflorenzano.github.io/posts/pi-hole-e-unbound-funcionamento</link>
