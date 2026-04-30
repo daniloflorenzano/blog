@@ -20,3 +20,7 @@
   --pm-paragraph-font-size: 1.3rem;
   --pm-font-family-primary: PT Serif, serif;
 }
+
+.plume .pm-disabled {
+  font-size: 1.1rem;
+}
