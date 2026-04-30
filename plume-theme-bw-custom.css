@@ -1,0 +1,22 @@
+:root {
+  --pm-font-family-secondary: PT Serif, serif;
+  --pm-primary-color: #000000;
+  --pm-secondary-color: #f0f0f0;
+  --pm-color-success: #048b4b;
+  --pm-app-surface-color: transparent;
+  --pm-app-ground-color: transparent;
+  --pm-mark-border-radius: 0px;
+  --pm-button-secondary-text-color: #444;
+  --pm-button-border-radius: 0px;
+  --pm-input-height: 48px;
+  --pm-input-border-radius: 0px;
+  --pm-input-switch-size: 26px;
+  --pm-pre-code-border-radius: 0px;
+  --pm-h1-font-size: 2.8rem;
+  --pm-h2-font-size: 2.3rem;
+  --pm-h3-font-size: 1.8rem;
+  --pm-h4-font-size: 1.5rem;
+  --pm-h6-font-size: 1.5rem;
+  --pm-paragraph-font-size: 1.3rem;
+  --pm-font-family-primary: PT Serif, serif;
+}
