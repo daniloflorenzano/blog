@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>Danilo Maia Florenzano</title>
+  <link>https://daniloflorenzano.github.io</link>
+  <description>🧙‍♂️ Salve!</description>
+  <atom:link href="https://daniloflorenzano.github.io/rss.xml" rel="self" type="application/rss+xml" />
+  <item>
+    <title>Pi-hole e Unbound: privacidade com adblock na rede e DNS recursivo</title>
+    <link>https://daniloflorenzano.github.io/posts/pi-hole-e-unbound-funcionamento</link>
+    <guid>https://daniloflorenzano.github.io/posts/pi-hole-e-unbound-funcionamento</guid>
+    <description><![CDATA[Pi-hole, Unbound, DNS recursivo e privacidade - funcionamento na prática]]></description>
+    <pubDate>Sun, 26 Apr 2026 22:33:43 GMT</pubDate>
+  </item>
+  <item>
+    <title>FLISoL 2026 - ZAPROXY: Testes de segurança em aplicações web</title>
+    <link>https://daniloflorenzano.github.io/posts/flisol-2026-zaproxy</link>
+    <guid>https://daniloflorenzano.github.io/posts/flisol-2026-zaproxy</guid>
+    <description><![CDATA[Fontes de pesquisa e dados apresentados na palestra]]></description>
+    <pubDate>Fri, 24 Apr 2026 22:58:09 GMT</pubDate>
+  </item>
+  <item>
+    <title>CTF #01 - Exploração do laboratório DC-1</title>
+    <link>https://daniloflorenzano.github.io/posts/CTF-01-DC-1</link>
+    <guid>https://daniloflorenzano.github.io/posts/CTF-01-DC-1</guid>
+    <description><![CDATA[Aplicação de técnicas de enumeração e execução de <i>exploits</i>, captura de credenciais, e elevação de privilégio em Linux. A postagem foca no passo-a-passo direto ao ponto, mostrando as abordagens com as quais obtive sucesso na captura das <i>flags</i>]]></description>
+    <pubDate>Sat, 28 Mar 2026 14:10:48 GMT</pubDate>
+  </item>
+  <item>
+    <title>Kali Linux no Docker</title>
+    <link>https://daniloflorenzano.github.io/posts/kali-linux-no-docker</link>
+    <guid>https://daniloflorenzano.github.io/posts/kali-linux-no-docker</guid>
+    <description><![CDATA[Como configurar um container do Kali Linux]]></description>
+    <pubDate>Fri, 20 Mar 2026 21:22:25 GMT</pubDate>
+  </item>
+  <item>
+    <title>Usando ActionBlock como uma Fila Dinâmica Recursiva e Multithread no .NET</title>
+    <link>https://daniloflorenzano.github.io/posts/fila-dinamica-action-block-dotnet-tpl</link>
+    <guid>https://daniloflorenzano.github.io/posts/fila-dinamica-action-block-dotnet-tpl</guid>
+    <description><![CDATA[Uma alternativa melhor ao Parallel.Foreach quando há necessidade de recursão indeterminada]]></description>
+    <pubDate>Sun, 02 Nov 2025 23:04:22 GMT</pubDate>
+  </item>
+  <item>
+    <title>POO: Herança versus Composição</title>
+    <link>https://daniloflorenzano.github.io/posts/heranca-versus-composicao</link>
+    <guid>https://daniloflorenzano.github.io/posts/heranca-versus-composicao</guid>
+    <description><![CDATA[Guia rápido para decidir entre herança e composição na Programação Orientada a Objetos.]]></description>
+    <pubDate>Sun, 08 Jun 2025 15:14:01 GMT</pubDate>
+  </item>
+  <item>
+    <title>Podman com Quadlets em produção</title>
+    <link>https://daniloflorenzano.github.io/posts/podman-com-quadlets</link>
+    <guid>https://daniloflorenzano.github.io/posts/podman-com-quadlets</guid>
+    <description><![CDATA[Como criar um ambiente de produção com Podman no Linux]]></description>
+    <pubDate>Sun, 08 Jun 2025 15:06:13 GMT</pubDate>
+  </item>
+  <item>
+    <title>Como consegui minha primeira oportunidade como dev!</title>
+    <link>https://daniloflorenzano.github.io/posts/meu-primeiro-estagio</link>
+    <guid>https://daniloflorenzano.github.io/posts/meu-primeiro-estagio</guid>
+    <description><![CDATA[Um pouco sobre como foi minha experiência pra conseguir a primeira vaga na área.]]></description>
+    <pubDate>Sun, 26 Jun 2022 17:11:57 GMT</pubDate>
+  </item>
+</channel>
+</rss>
