@@ -14,7 +14,7 @@ O movimento que tenho feito em busca de manter a programação como algo diverti
 
 Delego, ainda, à IA as partes que não me divertem. Porque, historicamente, tenho o péssimo hábito de abandonar os meus projetos quando chega a hora de escrever código que não me traz nenhuma satisfação. Então não posso dizer que a IA não escreve nada nos meus projetos pessoais, mas trabalhar dessa forma me traz o melhor cenário em que já estive: codifico na mão o que quero, consulto a IA para dúvidas de sintaxe em caso de ser uma linguagem nova, e delego a um agente o que considero chato, ex: desenvolver uma tela com qualquer framework JS.
 
-Rresta-me a parte legal: explorar desenvolvimento embarcado, aprender linguagens novas, recriar sistemas já existentes apenas para entender a fundo o funcionamento, etc. E, ao fim do dia, está recuperada a satisfação de ter de fato pensado e criado software.
+Resta-me a parte legal: explorar desenvolvimento embarcado, aprender linguagens novas, recriar sistemas já existentes apenas para entender a fundo o funcionamento, etc. E, ao fim do dia, está recuperada a satisfação de ter de fato pensado e criado software.
 
 <img 
   src="hello-world.png"
