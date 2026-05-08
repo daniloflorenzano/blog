@@ -10,18 +10,7 @@
     <link>https://daniloflorenzano.com.br/posts/ia-nao-escreve-meu-codigo</link>
     <guid>https://daniloflorenzano.com.br/posts/ia-nao-escreve-meu-codigo</guid>
     <description><![CDATA[Programar ainda pode ser divertido, e deixo pra IA só quando não for]]></description>
-    <content:encoded><![CDATA[<p>A IA escreve o código da empresa, mas não escreve o <strong>meu código</strong>.</p>
-<p>Isso não é totalmente verdade, afinal não sou nenhum purista ou saudosista dos tempos em que cada caractere precisava ser manualmente digitado (até porque nem tenho tempo de carreira para isso). Mas para mim, que tenho prazer em escrever código, essa nova maneira de programar mandando prompts para a IA me tirou algumas diversões que eu costumava ter no dia a dia.</p>
-<p>Momentos <em>&quot;Eureka!&quot;</em> se tornaram mais raros.</p>
-<p>O movimento que tenho feito em busca de manter a programação como algo divertido na minha rotina foi aceitar que o código que escrevo para a empresa pode e deve ser feito com IA. Afinal, ela conclui, com resultados satisfatórios o suficiente, tarefas de maneira muito mais rápida do que se eu as fizesse manualmente, e isso, para a empresa, tem muito valor. Mas, por outro lado, no meu tempo livre eu tenho os meus projetos. <strong>E meus projetos não requerem pressa</strong>, não precisam agradar acionistas e muito menos têm a pretensão de serem produtos comerciais. E, portanto, eu os faço no meu tempo, e com o meu código.</p>
-<p>Delego, ainda, à IA as partes que não me divertem. Porque, historicamente, tenho o péssimo hábito de abandonar os meus projetos quando chega a hora de escrever código que não me traz nenhuma satisfação. Então não posso dizer que a IA não escreve nada nos meus projetos pessoais, mas trabalhar dessa forma me traz o melhor cenário em que já estive: codifico na mão o que quero, consulto a IA para dúvidas de sintaxe em caso de ser uma linguagem nova, e delego a um agente o que considero chato, ex: desenvolver uma tela com qualquer framework JS.</p>
-<p>Resta-me a parte legal: explorar desenvolvimento embarcado, aprender linguagens novas, recriar sistemas já existentes apenas para entender a fundo o funcionamento, etc. E, ao fim do dia, está recuperada a satisfação de ter de fato pensado e criado software.</p>
-<p><img 
-  src="https://daniloflorenzano.com.br/posts/ia-nao-escreve-meu-codigo/hello-world.png"
-  alt="tela e-ink com a mensagem 'Hello World!' conectada a um ESP-32"
-  width="100%"
-  height="100%"
-/></p>]]></content:encoded>
+    <content:encoded><![CDATA[]]></content:encoded>
     <pubDate>Mon, 04 May 2026 11:17:43 GMT</pubDate>
   </item>
   <item>
@@ -29,70 +18,7 @@
     <link>https://daniloflorenzano.com.br/posts/pi-hole-e-unbound-funcionamento</link>
     <guid>https://daniloflorenzano.com.br/posts/pi-hole-e-unbound-funcionamento</guid>
     <description><![CDATA[Pi-hole, Unbound, DNS recursivo e privacidade - funcionamento na prática]]></description>
-    <content:encoded><![CDATA[<h2 id="introdução">Introdução</h2>
-<p><strong>Pi-hole</strong> é um serviço conhecido e amplamente utilizado por quem tem o hábito de hospedar serviços em sua rede local (prática conhecida como self-host ou home lab).
-Junto ao Pi-hole, que atua como um bloqueador de anúncios, é comum utilizar o <strong>Unbound</strong> como servidor DNS upstream para substituir os populares como Google, Cloudflare, etc.</p>
-<p>Essa combinação é interessante para quem preza pela privacidade e busca retirar do ISP e das big techs um pouco do controle sobre como navega na internet.</p>
-<h2 id="funcionamento">Funcionamento</h2>
-<p>A instalação dos serviços é simples e amplamente documentada, mas o funcionamento talvez seja um pouco abstrato demais para algumas pessoas. Portanto, a partir dessa documentação que fiz para meu próprio <em>home lab</em>, trago uma tentativa de facilitar a compreensão sobre o caminho que a requisição por um endereço faz.</p>
-<p><img 
-  src="https://daniloflorenzano.com.br/posts/pi-hole-e-unbound-funcionamento/fluxo-dns.png"
-  alt="Fluxo DNS"
-  width="100%"
-  height="100%"
-/></p>
-<p>Com <strong>Wireshark</strong>, por exemplo, é possível ainda verificar a comunicação acontecendo entre o dispositivo físico e o servidor Pi-hole.</p>
-<p><img 
-  src="https://daniloflorenzano.com.br/posts/pi-hole-e-unbound-funcionamento/wireshark-dns-udp-stream.png"
-  alt="Wireshark DNS UDP stream"
-  width="100%"
-  height="100%"
-/></p>
-<p>E no servidor é possível consultar a quem o Unbound está perguntando e de fato confirmar que ele vai na raiz da internet e usa da recursão para descobrir o IP do domínio requisitado.</p>
-<pre><code class="language-bash">pi@raspberrypi:~ $ dig daniloflorenzano.com.br @127.0.0.1 +trace
-
-; &lt;&lt;&gt;&gt; DiG 9.16.50-Raspbian &lt;&lt;&gt;&gt; daniloflorenzano.com.br @127.0.0.1 +trace
-;; global options: +cmd
-.                       86199   IN      NS      g.root-servers.net.
-.                       86199   IN      NS      h.root-servers.net.
-.                       86199   IN      NS      i.root-servers.net.
-.                       86199   IN      NS      j.root-servers.net.
-.                       86199   IN      NS      k.root-servers.net.
-.                       86199   IN      NS      l.root-servers.net.
-.                       86199   IN      NS      m.root-servers.net.
-.                       86199   IN      NS      a.root-servers.net.
-.                       86199   IN      NS      b.root-servers.net.
-.                       86199   IN      NS      c.root-servers.net.
-.                       86199   IN      NS      d.root-servers.net.
-.                       86199   IN      NS      e.root-servers.net.
-.                       86199   IN      NS      f.root-servers.net.
-.                       86199   IN      RRSIG   NS 8 0 518400 20260509170000 20260426160000 54393 . JAeCnn0ctf9onzDOWiwUf15K4sxMy/JYcsGV/VeAcuNLEJYwXGBj4mKq QifmZvbyunk92flXmKkmY8tvUNhgLe8IHvY9OvlBwPFnLOx2sC57HmVU 3YQEuST89Q/N/SRinX7moZ25HYw4zRjV+FTDtN+cOOEWNfdgthmhGqCI lRCXn8eYUhJIRtKjsf1JiAfQ6qVzqEUm6UhyKBoi7Es7xc0LASmVqH5+ /g6j0ZHAXRxiuVwLnQFOZP7W0BF9PFM2PFkXQEEFmOPWMWZTza7Aa6+R H7DxGFLS6D/Z0tTQXPj7/7Q06E605iY3Ea3frKyAC7j7KvQG/pFY8HwC fyd/ag==
-;; Received 525 bytes from 127.0.0.1#53(127.0.0.1) in 9 ms
-
-br.                     172800  IN      NS      a.dns.br.
-br.                     172800  IN      NS      b.dns.br.
-br.                     172800  IN      NS      c.dns.br.
-br.                     172800  IN      NS      d.dns.br.
-br.                     172800  IN      NS      e.dns.br.
-br.                     172800  IN      NS      f.dns.br.
-br.                     86400   IN      DS      38298 13 2 9F2D4993F47B0F2751DE0007D70A2754EE532FE373761154D9EA7A8C B9D8EA18
-br.                     86400   IN      RRSIG   DS 8 1 86400 20260509170000 20260426160000 54393 . QVIoHJde1qoAA5NQjnTQBpZ2THFIoJeTljV7eC+OP2eJxHywDac5UQlz xztQ78YPUDrsJ7dpiJW8d7/6pYtYUkD6N0CcWgg5Wq1/hMkv5I2O/czn u8U9F3W9pq0PvjBspVjRsKPm7wWBsVkqMTlo2oYvgnwaD7kSsuV0rV4M sXRV2eCeQXelUdg10hNmOixfzq7lCFRxsI1AF0j56soo3mw4MMD9L9aX ax+zTEgH87ouvxeuW+vuVjJWir6fbI/s4L7j/YCVD916l9C4ZuAU4Lov 1EwXUTNfNp3KVMzpc38BydiwOZzGqCIlRS/DCsOaId0qbVpzf3JAHWU9 cwH+zw==
-;; Received 751 bytes from 199.7.91.13#53(d.root-servers.net) in 119 ms
-
-daniloflorenzano.com.br. 3600   IN      NS      adaline.ns.cloudflare.com.
-daniloflorenzano.com.br. 3600   IN      NS      junade.ns.cloudflare.com.
-2bidp124m8r4hd7jotlt2hu4o5dtnolo.com.br. 900 IN NSEC3 1 1 0 8D1329DE8E1C267BA5B9 2BIE8MUC55C3C09GN5N3HN2IRINIVU7K NS SOA RRSIG DNSKEY NSEC3PARAM
-2bidp124m8r4hd7jotlt2hu4o5dtnolo.com.br. 900 IN RRSIG NSEC3 13 3 900 20260510230505 20260426220505 13359 com.br. YT0sSjTH3pm2YhSqmBFMBr+V+kMFFCFviCB++bwDiVedyYW9lUWOoPCN U+w2Cy1IpC/7ybYzHJodIXQ+6uGtVA==
-28v53s2huhg7i7lp4bjbmdrcu2kvr8ii.com.br. 900 IN NSEC3 1 1 0 8D1329DE8E1C267BA5B9 28V72MJ72MPU6FP3AC2CJHMR6CI6NOCK NS DS RRSIG
-28v53s2huhg7i7lp4bjbmdrcu2kvr8ii.com.br. 900 IN RRSIG NSEC3 13 3 900 20260505144506 20260421134506 13359 com.br. xa9eH+X8IKPwpKKFPzhwnDQEApV0jMwfczq9WQ7Ff0abP2stcnGqvwUG afhIJRMIyh+wEYhuGyMPPxHI0/OjrA==
-;; Received 523 bytes from 200.219.159.10#53(f.dns.br) in 9 ms
-
-daniloflorenzano.com.br. 300    IN      A       104.21.57.195
-daniloflorenzano.com.br. 300    IN      A       172.67.165.213
-;; Received 84 bytes from 108.162.195.30#53(junade.ns.cloud
-</code></pre>
-<h2 id="conclusão">Conclusão</h2>
-<p>Uma combinação de serviços simples, de configuração rápida e de baixíssimo custo computacional pode agregar bastante valor à rede doméstica.</p>]]></content:encoded>
+    <content:encoded><![CDATA[]]></content:encoded>
     <pubDate>Sun, 26 Apr 2026 22:33:43 GMT</pubDate>
   </item>
   <item>
@@ -100,24 +26,7 @@ daniloflorenzano.com.br. 300    IN      A       172.67.165.213
     <link>https://daniloflorenzano.com.br/posts/flisol-2026-zaproxy</link>
     <guid>https://daniloflorenzano.com.br/posts/flisol-2026-zaproxy</guid>
     <description><![CDATA[Fontes de pesquisa e dados apresentados na palestra]]></description>
-    <content:encoded><![CDATA[<h2 id="contato">Contato</h2>
-<ul>
-<li><a target="_blank" href="https://www.linkedin.com/in/daniloflorenzano/">Linkedin</a> </li>
-<li><a target="_blank" href="https://github.com/daniloflorenzano">Github</a></li>
-</ul>
-<h2 id="links">Links</h2>
-<ul>
-<li><a target="_blank" href="https://github.com/zaproxy/zaproxy">Repositório OWASP Zed Attack Proxy</a></li>
-<li><a target="_blank" href="https://www.zaproxy.org/docs/desktop/start/features/">Funcionalidades do ZAPROXY</a></li>
-<li><a target="_blank" href="https://github.com/juice-shop/juice-shop">Repositório OWASP Juice Shop</a></li>
-<li><a target="_blank" href="https://pt.wikipedia.org/wiki/Modelo_cliente%E2%80%93servidor">Modelo cliente-servidor</a></li>
-<li><a target="_blank" href="https://owasp.org/www-community/attacks/Manipulator-in-the-middle_attack">Ataque man-in-the-middle</a></li>
-</ul>
-<h2 id="relacionados">Relacionados</h2>
-<ul>
-<li><a target="_blank" href="https://daniloflorenzano.com.br/posts/CTF-01-DC-1/">CTF #01 - Exploração do laboratório DC-1</a></li>
-<li><a target="_blank" href="https://daniloflorenzano.com.br/posts/kali-linux-no-docker/">Kali Linux no Docker</a></li>
-</ul>]]></content:encoded>
+    <content:encoded><![CDATA[]]></content:encoded>
     <pubDate>Fri, 24 Apr 2026 22:58:09 GMT</pubDate>
   </item>
   <item>
@@ -125,31 +34,7 @@ daniloflorenzano.com.br. 300    IN      A       172.67.165.213
     <link>https://daniloflorenzano.com.br/posts/CTF-01-DC-1</link>
     <guid>https://daniloflorenzano.com.br/posts/CTF-01-DC-1</guid>
     <description><![CDATA[Aplicação de técnicas de enumeração e execução de <i>exploits</i>, captura de credenciais, e elevação de privilégio em Linux. A postagem foca no passo-a-passo direto ao ponto, mostrando as abordagens com as quais obtive sucesso na captura das <i>flags</i>]]></description>
-    <content:encoded><![CDATA[<h2 id="laboratório-dc-1">Laboratório DC-1</h2>
-<blockquote>
-<p>DC-1 is a purposely built vulnerable lab for the purpose of gaining experience in the world of penetration testing.</p>
-<p>It was designed to be a challenge for beginners, but just how easy it is will depend on your skills and knowledge, and your ability to learn.</p>
-</blockquote>
-<p>O laboratório pode ser configurado usando VirtualBox. A imagem para download está disponível no repositório da <a target="_blank" href="https://www.vulnhub.com/entry/dc-1,292/">VulnhHub</a>.</p>
-<p>Para a exploração, considere uma máquina Kali Linux.
-Se necessário, veja <a href="https://daniloflorenzano.com.br/posts/kali-linux-no-docker/" target="_blank">Kali Linux no Docker</a>.</p>
-<h2 id="reconhecimento">Reconhecimento</h2>
-<h3 id="identificar-a-máquina-na-rede-local-com-netdiscover">Identificar a máquina na rede local com <code>netdiscover</code>:</h3>
-<pre><code class="language-bash">┌──(root㉿omarchy)-[~]
-└─# netdiscover -r 192.168.0.0/24
-
-Currently scanning: Finished!   |   Screen View: Unique Hosts
-
- 9 Captured ARP Req/Rep packets, from 9 hosts.   Total size: 522
- _____________________________________________________________________________
-   IP            At MAC Address     Count     Len  MAC Vendor / Hostname
- -----------------------------------------------------------------------------
- ...
- ...
- 192.168.0.119   08:00:27:ca:79:73      1      42  PCS Systemtechnik GmbH
-</code></pre>
-<hr>
-<h3 id="identificar-as-portas-expostas-com-nmap">Identificar as portas expostas com <code>nmap</code>:</h3>
+    <content:encoded><![CDATA[<h3 id="identificar-as-portas-expostas-com-nmap">Identificar as portas expostas com <code>nmap</code>:</h3>
 <pre><code class="language-bash">┌──(root㉿omarchy)-[~]
 └─# nmap -sV 192.168.0.119
 Starting Nmap 7.98 ( https://nmap.org ) at 2026-03-28 14:30 +0000
@@ -434,7 +319,16 @@ by contacting me via Twitter - @DCAU7
 </blockquote>
 <hr>
 <h2 id="conclusão">Conclusão</h2>
-<p>DC-1 foi meu primeiro CTF e tive uma experiência positiva com o laboratório. As orientações deixadas pelo autor em cada bandeira ditam o próximo passo, mas não de maneira óbvia, o que provoca a curiosidade de entender a pista e extrair dela o caminho para a próxima exploração.</p>]]></content:encoded>
+<p>DC-1 foi meu primeiro CTF e tive uma experiência positiva com o laboratório. As orientações deixadas pelo autor em cada bandeira ditam o próximo passo, mas não de maneira óbvia, o que provoca a curiosidade de entender a pista e extrair dela o caminho para a próxima exploração.</p>
+
+
+            <footer class="blog-footer">
+                <hr />
+                <p style="font-size: 1rem">
+                    © 2022-2026 Danilo M. Florenzano - Todos os direitos
+                    reservados
+                </p>
+            </footer>]]></content:encoded>
     <pubDate>Sat, 28 Mar 2026 14:10:48 GMT</pubDate>
   </item>
   <item>
@@ -442,71 +336,7 @@ by contacting me via Twitter - @DCAU7
     <link>https://daniloflorenzano.com.br/posts/kali-linux-no-docker</link>
     <guid>https://daniloflorenzano.com.br/posts/kali-linux-no-docker</guid>
     <description><![CDATA[Como configurar um container do Kali Linux]]></description>
-    <content:encoded><![CDATA[<p><img 
-  src="https://daniloflorenzano.com.br/posts/kali-linux-no-docker/kali-lab.png"
-  alt="output do comand fastfetch no kali linux"
-  width="100%"
-  height="100%"
-/></p>
-<h2 id="container-vs-máquina-virtual---escolha-pessoal">Container vs Máquina Virtual - escolha pessoal</h2>
-<p>Trabalhar com o Kali em um container tem suas vantagens e desvantagens, e a maioria delas é as mesmas que você encontraria em qualquer situação semelhante (performance, isolamento de ambiente, etc). E, para mim, os pontos principais que me levaram a optar pelo container foram dois:</p>
-<ol>
-<li><p><strong>Aproveitar o meu workflow já configurado</strong>. Utilizo, até o momento da escrita desse post, Hyprland como gerenciador de janelas. Utilizar o Kali em um container sem ambiente gráfico me poupa de me adaptar ao <em>workflow</em> da distro ou de ter o trabalho de adaptar ele ao meu. </p>
-</li>
-<li><p><strong>Ambientes gráficos, nesse caso, não me fazem falta</strong>. Algumas ferramentas no Kali, como Wireshark e Burp Suite, já fazem parte do meu dia a dia independente do estudo a parte que faço sobre segurança da informação e estão instaladas diretamente no meu SO host.</p>
-</li>
-</ol>
-<h2 id="download-da-imagem-e-configuração-do-container">Download da imagem e configuração do container</h2>
-<p>A imagem Docker do Kali não é nenhuma &quot;gambiarra; é oficial e pode ser encontrada <a href="https://www.kali.org/docs/containers/official-kalilinux-docker-images/">aqui</a>.</p>
-<p>Como sugerido no próprio portal, a imagem recomendada é a <code>kali-rolling</code>.</p>
-<pre><code class="language-bash">docker pull kalilinux/kali-rolling
-</code></pre>
-<p>Após o <em>pull</em> da imagem, o container já pode ser iniciado. Porém, aqui algumas configurações se fazem necessárias para o uso mais conveniente do sistema.</p>
-<p>Antes de iniciar o container, recomendo que rode o seguinte comando para criar o volume em que as configurações feitas no Kali sejam persistidas:</p>
-<pre><code class="language-bash">docker volume create kali_data
-</code></pre>
-<p>O seguinte comando cria, inicia o container e em seguida já dá acesso ao Kali pelo <code>bash</code>:</p>
-<pre><code class="language-bash">docker run -it \
- --name kali-lab \
- --network host \
- -v kali_data:/root \
- --cap-add=NET_ADMIN \
- --cap-add=NET_RAW \
- kalilinux/kali-rolling /bin/bash
-</code></pre>
-<ul>
-<li><code>--network host</code>: O container compartilha a interface de rede diretamente com a sua máquina real. Essencial para ataques de rede, <em>sniffing</em>, <em>scanners</em> e conexão com <em>reverse shell</em>.</li>
-<li><code>--cap-add=NET_ADMIN</code>: Permite configurar interfaces de rede.</li>
-<li><code>--cap-add=NET_RAW</code>: Permite que o Nmap crie pacotes &quot;crus&quot; para <em>scans</em> furtivos.</li>
-</ul>
-<p>A documentação do Kali informa que a imagem não possui as ferramentas padrões instaladas, e, portanto, é necessário executar o comando abaixo no <code>bash</code> do container:</p>
-<pre><code class="language-bash">apt update &amp;&amp; apt -y install kali-linux-headless
-</code></pre>
-<p>Acompanhe a instalação até o final.</p>
-<p>Seu Kali está pronto, e mesmo que você saia do container ou feche o terminal, basta iniciá-lo novamente com <code>docker start kali-lab</code> e acessá-lo com <code>docker exec -it kali-lab /bin/bash</code>.</p>
-<h2 id="melhoria-do-workflow">Melhoria do workflow</h2>
-<p>Pra facilitar a vida, uma configuração <strong>opcional para quem usa Linux</strong> é adicionar uma função no <code>~/.bashrc</code> que combina os comandos <em>start</em> e o <em>exec -it</em>. Dessa forma é mais simples iniciar o ambiente e abrir quantos terminais forem necessários dentro do container.</p>
-<pre><code class="language-bash">kali() {
-    # Verifica se o container existe
-    if [ &quot;$(docker ps -aq -f name=kali-lab)&quot; ]; then
-        # Se estiver parado, inicia
-        if [ ! &quot;$(docker ps -q -f name=kali-lab)&quot; ]; then
-            echo &quot;Iniciando kali-lab...&quot;
-            docker start kali-lab
-        fi
-        # Entra no container
-        docker exec -it kali-lab /bin/bash
-    else
-        echo &quot;Erro: O container &#39;kali-lab&#39; não existe. Execute o comando &#39;docker run&#39; primeiro.&quot;
-    fi
-}
-</code></pre>
-<p>Após essa função adicionada no arquivo <code>~/.bashrc</code>, basta executar <code>kali</code> no terminal para acessar o ambiente.</p>
-<pre><code class="language-bash">~ ❯ kali
-┌──(root㉿omarchy)-[/]
-└─# bom hacking!
-</code></pre>
-<p>Feito!</p>]]></content:encoded>
+    <content:encoded><![CDATA[]]></content:encoded>
     <pubDate>Fri, 20 Mar 2026 21:22:25 GMT</pubDate>
   </item>
   <item>
@@ -514,11 +344,7 @@ by contacting me via Twitter - @DCAU7
     <link>https://daniloflorenzano.com.br/posts/fila-dinamica-action-block-dotnet-tpl</link>
     <guid>https://daniloflorenzano.com.br/posts/fila-dinamica-action-block-dotnet-tpl</guid>
     <description><![CDATA[Uma alternativa melhor ao Parallel.Foreach quando há necessidade de recursão indeterminada]]></description>
-    <content:encoded><![CDATA[<blockquote>
-<p><em>“TPL Dataflow é uma mistura interessante de tecnologias assíncronas e paralelas. Ela é útil quando você tem uma sequência de processos que precisam ser aplicados aos seus dados.”</em><br>— <em>Stephen Cleary, Concurrency in C# Cookbook</em></p>
-</blockquote>
-<hr>
-<p>Recentemente precisei percorrer uma árvore de categorias recursiva — começando com cerca de 20 nós raiz, cada um contendo um número desconhecido de subcategorias (e sub-subcategorias, e assim por diante).</p>
+    <content:encoded><![CDATA[<p>Recentemente precisei percorrer uma árvore de categorias recursiva — começando com cerca de 20 nós raiz, cada um contendo um número desconhecido de subcategorias (e sub-subcategorias, e assim por diante).</p>
 <p>Esse tipo de <strong>carga de trabalho que se expande dinamicamente</strong> não funciona bem com ferramentas de paralelismo estático como <code>Parallel.ForEach</code>.</p>
 <hr>
 <h2 id="o-problema-distribuição-estática-de-trabalho">O Problema: Distribuição Estática de Trabalho</h2>
@@ -595,7 +421,16 @@ by contacting me via Twitter - @DCAU7
 <li>Expansão recursiva de trabalho: Cada tarefa pode adicionar novas tarefas de forma segura na mesma fila.</li>
 <li>Paralelismo controlado: MaxDegreeOfParallelism mantém o uso de recursos sob controle.</li>
 <li>Encerramento limpo: _activeItems rastreia o número de tarefas em andamento — quando chega a zero, o pipeline é finalizado de forma ordenada.</li>
-</ul>]]></content:encoded>
+</ul>
+
+
+            <footer class="blog-footer">
+                <hr />
+                <p style="font-size: 1rem">
+                    © 2022-2026 Danilo M. Florenzano - Todos os direitos
+                    reservados
+                </p>
+            </footer>]]></content:encoded>
     <pubDate>Sun, 02 Nov 2025 23:04:22 GMT</pubDate>
   </item>
   <item>
@@ -603,31 +438,7 @@ by contacting me via Twitter - @DCAU7
     <link>https://daniloflorenzano.com.br/posts/heranca-versus-composicao</link>
     <guid>https://daniloflorenzano.com.br/posts/heranca-versus-composicao</guid>
     <description><![CDATA[Guia rápido para decidir entre herança e composição na Programação Orientada a Objetos.]]></description>
-    <content:encoded><![CDATA[<h2 id="como-decidir">Como decidir</h2>
-<p>Usar <strong>herança</strong> quando precisar de:</p>
-<ul>
-<li>reaproveitamento de código</li>
-<li>polimorfismo</li>
-</ul>
-<p>Usar <strong>composição</strong> quando precisar de:</p>
-<ul>
-<li>reaproveitamento de código</li>
-</ul>
-<p>Usar uma <strong>interface</strong> quando precisar de:</p>
-<ul>
-<li>polimorfismo</li>
-</ul>
-<p><strong>Ou seja, a herança é bem vinda quando, e somente quando, as duas necessidades forem verdade. Do contrario, prefira sempre composição.</strong></p>
-<p>É importante ressaltar que a herança pode levar a um acoplamento mais forte entre as classes, o que pode dificultar a manutenção e evolução do código.
-A composição, por outro lado, promove um acoplamento mais fraco, permitindo maior flexibilidade e reutilização de componentes. Por isso, muitos autores recomendam a composição como uma abordagem preferencial na Programação Orientada a Objetos.</p>
-<h2 id="exemplo">Exemplo</h2>
-<p>No exemplo da imagem, a herança não é justificada porque nenhuma das classes herdeiras sobrescreve o método da classe principal (polimorfismo), apenas é reaproveitado o <code>Metodo1()</code> (reaproveitamento de código).
-Nesse caso, como apenas um dos requisitos é preenchido, é melhor usar composição.</p>
-<p><img src="https://daniloflorenzano.com.br/posts/heranca-versus-composicao/composicao.png" alt="composicao"></p>
-<p>Há também a abordagem de não usar herança mesmo em casos que preencham os dois requisitos. Pois ambos podem ser satisfeitos através da combinação de interfaces e composição.</p>
-<p><img src="https://daniloflorenzano.com.br/posts/heranca-versus-composicao/composicao-com-interface.png" alt="composicao com interface"></p>
-<h2 id="referência">Referência</h2>
-<p><a href="https://www.youtube.com/watch?v=C3B5IIlt4-0">Only Use Inheritance If You Want Both of These - by Christopher Okhravi</a></p>]]></content:encoded>
+    <content:encoded><![CDATA[]]></content:encoded>
     <pubDate>Sun, 08 Jun 2025 15:14:01 GMT</pubDate>
   </item>
   <item>
@@ -635,11 +446,7 @@ Nesse caso, como apenas um dos requisitos é preenchido, é melhor usar composi�
     <link>https://daniloflorenzano.com.br/posts/podman-com-quadlets</link>
     <guid>https://daniloflorenzano.com.br/posts/podman-com-quadlets</guid>
     <description><![CDATA[Como criar um ambiente de produção com Podman no Linux]]></description>
-    <content:encoded><![CDATA[<p>Aluguei uma VPS e queria disponibilizar uma API que desenvolvi.</p>
-<p>Optei por utilizar contêineres. A escolha do <strong>Podman</strong> foi feita considerando o objetivo de melhorar minha afinidade com a ferramenta e, também, usufruir da integração nativa com o <strong>systemd</strong>.</p>
-<p>Para atingir um resultado satisfatório, considerando a inicialização dos contêineres no boot e a possibilidade de acompanhar logs pelo <code>journalctl</code>, executei os seguintes passos:</p>
-<hr>
-<ol>
+    <content:encoded><![CDATA[<ol>
 <li><p>Criei um pod com os contêineres necessários.</p>
 </li>
 <li><p>Gerei um arquivo YAML para Kubernetes a partir do pod:</p>
@@ -693,7 +500,16 @@ sudo systemctl daemon-reload
 <li><a href="https://www.youtube.com/live/LsZB_mI7TcQ?si=ZKEaWhoXwgrhYves">Quadlets, Pods, and working with the latest Podman, Podman 5</a>  </li>
 <li><a href="https://oracle-base.com/articles/linux/podman-generate-and-play-kubernetes-yaml-files">Podman: Generate and Play Kubernetes YAML Files</a>  </li>
 <li><a href="https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html">Documentação oficial: podman-systemd.unit</a></li>
-</ul>]]></content:encoded>
+</ul>
+
+
+            <footer class="blog-footer">
+                <hr />
+                <p style="font-size: 1rem">
+                    © 2022-2026 Danilo M. Florenzano - Todos os direitos
+                    reservados
+                </p>
+            </footer>]]></content:encoded>
     <pubDate>Sun, 08 Jun 2025 15:06:13 GMT</pubDate>
   </item>
   <item>
@@ -701,92 +517,7 @@ sudo systemctl daemon-reload
     <link>https://daniloflorenzano.com.br/posts/meu-primeiro-estagio</link>
     <guid>https://daniloflorenzano.com.br/posts/meu-primeiro-estagio</guid>
     <description><![CDATA[Um pouco sobre como foi minha experiência pra conseguir a primeira vaga na área.]]></description>
-    <content:encoded><![CDATA[<p>
-	Conseguir a primeira vaga, seja de estágio ou Dev Jr, pra muitos, assim como
-	foi pra mim, é o primeiro grande desafio da área. Muito mais difícil que
-	fazer uma API ou um Front-end para consumí-la, não é?
-</p>
-
-<p>
-	Não é tão simples determinar o que me fez conseguir o estágio, até porque, no
-	fim, tudo o que eu fiz até hoje tenho certeza que me favoreceu na entrevista.
-	Então vou contar um pouco do que fiz.
-</p>
-
-<p>
-	A pouco mais de 1 ano atrás, comecei na programação através de um evento da
-	plataforma de cursos Alura, se não me engano se chamava "Imersão DEV". Foi
-	uma semana de aulas básicas de HTML, CSS e JavaScript com alguns desafios
-	bens legais. Ao mesmo tempo que participava do evento, eu comecei a assistir
-	as aulas de JavaScript do professor Gustavo Guanabara, do canal Curso em
-	Vídeo.
-</p>
-
-<p>
-	Um mês depois, em Junho de 2021, consegui um emprego de Técnico de
-	Informática (já tinha uma boa base de redes) em um hospital e ao mesmo tempo
-	decidi assinar a Alura. Durante um ano trabalhando e estudando, apliquei para
-	muitas, mas muitas vagas mesmo. E durante 10 meses eu não consegui sequer uma
-	entrevista. Mas aprendi muito, montei diversos projetos no Github, consegui
-	certificados, fiz bons amigos que também estavam estudando, fiz boas conexões
-	no Linkedin e o mais importante de tudo: em Janeiro de 2022
-	<b>entrei pra faculdade de Sistemas!</b>
-</p>
-
-<p>
-	A faculdade me abriu a possibilidade de me inscrever para vagas de estágio, e
-	isso fez uma baita diferença. Se você aplica para vagas de Dev Jr que não
-	requerem ensino superior e nem experiência, já deve ter notado que na maioria
-	das vezes acaba concorrendo com outros mil participantes, e estando numa
-	faculdade, você fica elegível para vagas menos concorridas, que filtram os
-	que estejam ao menos cursando o ensino superior.
-</p>
-
-<p>
-	Então nos últimos 6 meses, eu passei a aplicar para vagas de estágio também.
-	Em Maio eu encontrei uma vaga em um
-	<a target="_blank" href="https://www.linkedin.com/groups/9184036/"
-		>grupo de divulgação de vagas de estágio e Jr no linkedin</a
-	>
-	e mandei meu currículo e uma carta de apresentação para o email que estava
-	descrito no post. Na semana seguinte, me responderam perguntando se eu tinha
-	realmente interesse e anexado um PDF com mais informações sobre a vaga, e
-	depois da minha confirmação me envinou um formulário com um tempo determinado
-	para ser preenchido com diversas perguntas daquelas que sempre vemos nos
-	processos seletivos mesmo. Mas o diferencial dessa foi que ao final do
-	formulário houve um teste técnico, onde tive que escrever um comando SQL
-	pedido e também desenvolver, em qualquer linguagem, alguns métodos de
-	manipulação de Array.
-</p>
-
-<p>
-	Duas semanas depois de eu ter enviado a resposta do formulário, entrei em
-	contato perguntando sobre o processo. Me pediram desculpas pela demora da
-	resposta e disseram que tiveram um número muito grande de candidatos, mais de
-	70 (já fiquei muito feliz, pois estava acostumado com concorrer com mais de
-	mil) e me perguntaram se tinha disponibilidade para uma entrevista. Óbvio que
-	tinha, estava a 1 ano esperando por isso! Então na mesma semana fui
-	entrevistado pelo Dev Sênior que me explicou que dos mais de 70
-	participantes, só 30 responderam o teste técnico e desse, só 6 haviam
-	respondido de forma coerente. E depois disso me pediu para explicar o
-	raciocínio que eu tive para desenvolver o que havia sido pedido. O resto da
-	entrevista foi uma conversa bem descontraída em quem eu ia contando minhas
-	experiências para o entrevistador e respondia perguntas como: "Como você
-	construiria uma API?", "Entende algo sobre POO?", "Qual sua familiaridade com
-	SQL?" e algumas outras sobre tecnologias específicas. E foi nesse momento que
-	eu percebi que consegui a entrevista no momento certo, pois eu não estaria
-	preparado para responder a essas perguntas com tanta tranquilidade se ela
-	tivesse acontecido antes.
-</p>
-
-<p>
-	O resultado da entrevista foi o meu tão almejado sim! E agora estou me
-	desdobrando pra aprender C# e conseguir ajudar a equipe que me acolheu e me
-	deu essa oportunidade. Espero ter experiências interessantes pra contar em
-	futuros posts aqui e no meu Linkedin. Caso ainda tenha alguma dúvida ou
-	queira conversar, me chama
-	<a href="https://www.linkedin.com/in/daniloflorenzano/">aqui!</a>
-</p>]]></content:encoded>
+    <content:encoded><![CDATA[]]></content:encoded>
     <pubDate>Sun, 26 Jun 2022 17:11:57 GMT</pubDate>
   </item>
 </channel>

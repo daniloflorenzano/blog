@@ -1,80 +1,133 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="{{blog_locale}}">
-<head>
-  <title>{{post_title}}</title>
-  <meta charset="UTF-8">
-  
-  <!-- SEO -->
-  <meta name="author" content="{{blog_author}}">
-  <meta name="description" content="{{post_description}}">
-  <meta property="og:title" content="{{post_title}}">
-  <meta property="og:description" content="{{post_description}}">
-  <meta property="og:site_name" content="{{blog_title}}">
-  <meta property="og:url" content="{{post_url}}">
-  <meta property="og:image" content="{{blog_url}}/card.jpg"/>
-  <meta property="og:type" content="Website"/>
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="627" />
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:site" content="{{blog_title}}">
-  <meta name="twitter:creator" content="{{blog_author}}">
-  <meta name="twitter:title" content="{{post_title}}">
-  <meta name="twitter:description" content="{{post_description}}">
-  <meta name="twitter:image:src" content="{{blog_url}}/card.jpg">
-  <!--  -->
+    <head>
+        <title>{{post_title}}</title>
+        <meta charset="UTF-8" />
 
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta http-equiv="Content-Language" content="{{blog_locale}}">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <link rel="icon" href="../../favicon.png">
-  <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="{{blog_url}}/rss.xml" />
-  <link href="https://unpkg.com/plume-css@1.0.13/lib/plume-all.css" rel="stylesheet" rel="preload" as="style" media="all" defer>
-  <link rel="stylesheet" href="https://unpkg.com/1post@1.0.3/themes/{{blog_theme}}.css">
-  <link href="https://unpkg.com/prismjs@1.28.0/themes/{{blog_prism_theme}}.min.css" rel="stylesheet" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Ubuntu&display=swap" rel="stylesheet">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-  <link
-			rel="stylesheet"
-			href="./../../plume-theme-bw-custom.css"
-		/>
-  
-</head>
-<body class="plume">
-  <div class="pm-container">
-		<p>
-			<a style="text-align: right; display: block;" target="_blank" href="{{blog_url}}/rss.xml">RSS Feed 
-				<svg
-					xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-rss"
-					viewBox="0 0 16 16">
-					<path
-						d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
-					<path
-						d="M5.5 12a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-3-8.5a1 1 0 0 1 1-1c5.523 0 10 4.477 10 10a1 1 0 1 1-2 0 8 8 0 0 0-8-8 1 1 0 0 1-1-1m0 4a1 1 0 0 1 1-1 6 6 0 0 1 6 6 1 1 0 1 1-2 0 4 4 0 0 0-4-4 1 1 0 0 1-1-1" />
-				</svg>
-			</a>
-		</p>
+        <!-- SEO -->
+        <meta name="author" content="{{blog_author}}" />
+        <meta name="description" content="{{post_description}}" />
+        <meta property="og:title" content="{{post_title}}" />
+        <meta property="og:description" content="{{post_description}}" />
+        <meta property="og:site_name" content="{{blog_title}}" />
+        <meta property="og:url" content="{{post_url}}" />
+        <meta property="og:image" content="{{blog_url}}/card.jpg" />
+        <meta property="og:type" content="Website" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="627" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:site" content="{{blog_title}}" />
+        <meta name="twitter:creator" content="{{blog_author}}" />
+        <meta name="twitter:title" content="{{post_title}}" />
+        <meta name="twitter:description" content="{{post_description}}" />
+        <meta name="twitter:image:src" content="{{blog_url}}/card.jpg" />
+        <!--  -->
 
-    <h1>{{post_title}}</h1>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta http-equiv="Content-Language" content="{{blog_locale}}" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+        <link rel="icon" href="../../favicon.png" />
+        <link
+            rel="alternate"
+            type="application/rss+xml"
+            title="RSS Feed"
+            href="{{blog_url}}/rss.xml"
+        />
+        <link
+            href="https://unpkg.com/plume-css@1.0.13/lib/plume-all.css"
+            rel="stylesheet"
+            rel="preload"
+            as="style"
+            media="all"
+            defer
+        />
+        <link
+            rel="stylesheet"
+            href="https://unpkg.com/1post@1.0.3/themes/{{blog_theme}}.css"
+        />
+        <link
+            href="https://unpkg.com/prismjs@1.28.0/themes/{{blog_prism_theme}}.min.css"
+            rel="stylesheet"
+        />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Ubuntu&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="./../../plume-theme-bw-custom.css" />
+    </head>
 
-    <p>
-      <a href="../..">← ← ←</a> &nbsp; 
-      {{post_created_at_formated}} | <strong>{{blog_posted_by_hint}}</strong>
-      <a href="{{blog_author_url}}" target="_blank" rel="noreferrer noopener">{{blog_author}}</a>
-    </p>
+    <style>
+        .blog-footer {
+            text-align: left;
+            margin-top: 4rem;
+            padding-bottom: 2rem;
+            opacity: 0.7;
+        }
+    </style>
 
-    <hr>
+    <body class="plume">
+        <div class="pm-container">
+            <p>
+                <a
+                    style="text-align: right; display: block"
+                    target="_blank"
+                    href="{{blog_url}}/rss.xml"
+                    >RSS Feed
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        class="bi bi-rss"
+                        viewBox="0 0 16 16"
+                    >
+                        <path
+                            d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"
+                        />
+                        <path
+                            d="M5.5 12a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m-3-8.5a1 1 0 0 1 1-1c5.523 0 10 4.477 10 10a1 1 0 1 1-2 0 8 8 0 0 0-8-8 1 1 0 0 1-1-1m0 4a1 1 0 0 1 1-1 6 6 0 0 1 6 6 1 1 0 1 1-2 0 4 4 0 0 0-4-4 1 1 0 0 1-1-1"
+                        />
+                    </svg>
+                </a>
+            </p>
 
-    {{post}}
+            <h1>{{post_title}}</h1>
 
-  </div>
+            <p>
+                <a href="../..">← ← ←</a> &nbsp; {{post_created_at_formated}} |
+                <strong>{{blog_posted_by_hint}}</strong>
+                <a
+                    href="{{blog_author_url}}"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    >{{blog_author}}</a
+                >
+            </p>
 
-  <!-- Prism Code Highlighting -->
-  <script src="https://unpkg.com/prismjs@1.28.0/components/prism-core.min.js"></script>
-	<script src="https://unpkg.com/prismjs@1.28.0/plugins/autoloader/prism-autoloader.min.js"></script>
-</body>
+            <hr />
+
+            {{post}}
+
+            <footer class="blog-footer">
+                <hr />
+                <p style="font-size: 1rem">
+                    © 2022-2026 Danilo M. Florenzano - Todos os direitos
+                    reservados
+                </p>
+            </footer>
+        </div>
+
+        <!-- Prism Code Highlighting -->
+        <script src="https://unpkg.com/prismjs@1.28.0/components/prism-core.min.js"></script>
+        <script src="https://unpkg.com/prismjs@1.28.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    </body>
 </html>
